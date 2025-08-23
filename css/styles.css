@@ -1,3 +1,42 @@
+
+
+
+
+
+
+
+:root {
+  --color-primary: #1a1a2e;
+  --color-secondary: #16213e;
+  --color-accent: #ffd700;
+  --color-text: #333;
+  --color-light: #f8f9fa;
+}
+
+body.tema-azul {
+  --color-primary: #1a1a2e;
+  --color-secondary: #16213e;
+  --color-accent: #ffd700;
+  --color-text: #333;
+  --color-light: #f8f9fa;
+}
+
+body.tema-amarillo_gris {
+  --color-primary: #ffc107;
+  --color-secondary: #6c757d;
+  --color-accent: #212529;
+  --color-text: #212529;
+  --color-light: #f8f9fa;
+}
+
+body.tema-blanco_gris {
+  --color-primary: #ffffff;
+  --color-secondary: #dee2e6;
+  --color-accent: #000000;
+  --color-text: #000000;
+  --color-light: #f8f9fa;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +51,7 @@ body {
 
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   padding: 15px 0;
   position: relative;
 }
@@ -58,7 +97,7 @@ body {
 }
 
 .nav-menu a {
-  color: #ffd700;
+  color: var(--color-accent);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -296,7 +335,7 @@ body {
 .property-price {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #ffd700;
+  color: var(--color-accent);
   margin-bottom: 15px;
 }
 
@@ -323,7 +362,7 @@ body {
 
 /* Footer */
 .footer {
-  background: #ffd700;
+  background: var(--color-accent);
   padding: 40px 0 20px;
 }
 
@@ -478,8 +517,8 @@ body {
 }
 
 .btn {
-  background: #1a1a2e;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-light);
   padding: 12px 24px;
   border: none;
   border-radius: 5px;
@@ -490,8 +529,8 @@ body {
 }
 
 .btn:hover {
-  background: #ffd700;
-  color: #1a1a2e;
+  background: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .btn-danger {

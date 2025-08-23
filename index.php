@@ -51,7 +51,8 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="tema-<?php echo htmlspecialchars($config['tema_color']); ?>">
+
     <!-- Header -->
     <header class="header">
         <div class="header-container">
