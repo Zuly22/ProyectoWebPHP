@@ -303,7 +303,7 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
         
         <div class="footer-bottom">
-            <p>Derechos Reservados 2024</p>
+            <p>Derechos Reservados 2025</p>
         </div>
     </footer>
 </body>
