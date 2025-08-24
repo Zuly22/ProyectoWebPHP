@@ -265,7 +265,7 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         </div>
 
         <div class="footer-bottom">
-            <p>Derechos Reservados 2024</p>
+            <p>Derechos Reservados 2025</p>
         </div>
     </footer>
 </body>
