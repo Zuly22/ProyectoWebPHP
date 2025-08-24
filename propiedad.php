@@ -5,7 +5,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 // Obtener ID de la propiedad
-$id = isset($_GET['id']) ? $_GET['id'] : 0;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Obtener datos de la propiedad
 $query = "SELECT p.*, u.nombre as agente_nombre, u.telefono as agente_telefono, u.correo as agente_correo 
@@ -13,7 +13,7 @@ $query = "SELECT p.*, u.nombre as agente_nombre, u.telefono as agente_telefono, 
           LEFT JOIN usuarios u ON p.agente_id = u.id 
           WHERE p.id = :id";
 $stmt = $db->prepare($query);
-$stmt->bindParam(':id', $id);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 $propiedad = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,8 +27,19 @@ $query = "SELECT * FROM configuracion_sitio LIMIT 1";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC);
-?>
 
+// Imagen destacada (fallback)
+$img = (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada']))
+    ? $propiedad['imagen_destacada']
+    : '/placeholder.svg?height=400&width=600';
+
+// URL de Google Maps si hay dirección en 'mapa'
+$mapsUrl = '';
+if (!empty($propiedad['mapa'])) {
+    $addr = urlencode($propiedad['mapa']);
+    $mapsUrl = "https://www.google.com/maps/search/?api=1&query={$addr}";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -78,16 +89,16 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 <div class="property-detail-grid">
                     <div class="property-detail-image">
-                        <img src="/placeholder.svg?height=400&width=600" alt="<?php echo $propiedad['titulo']; ?>">
+                        <img src="<?php echo htmlspecialchars($img); ?>" alt="<?php echo htmlspecialchars($propiedad['titulo']); ?>">
                     </div>
                     
                     <div class="property-detail-info">
                         <div class="property-price" style="font-size: 2rem; margin-bottom: 20px;">
-                            $<?php echo number_format($propiedad['precio']); ?>
+                            $<?php echo number_format((float)$propiedad['precio']); ?>
                         </div>
                         
                         <div class="property-type">
-                            <strong>Tipo:</strong> <?php echo ucfirst($propiedad['tipo']); ?>
+                            <strong>Tipo:</strong> <?php echo htmlspecialchars(ucfirst($propiedad['tipo'])); ?>
                         </div>
                         
                         <div class="property-location">
@@ -102,15 +113,26 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="property-description">
                     <h3>Descripción</h3>
                     <p><?php echo nl2br(htmlspecialchars($propiedad['descripcion_larga'] ?: $propiedad['descripcion_breve'])); ?></p>
                 </div>
-                
+
+                <?php if ($mapsUrl): ?>
+                <div class="property-map" style="margin:30px 0;">
+                    <h3>Ubicación</h3>
+                    <p>
+                        <a href="<?php echo $mapsUrl; ?>" target="_blank" class="btn">
+                            Ver en Google Maps
+                        </a>
+                    </p>
+                </div>
+                <?php endif; ?>
+
                 <div class="property-actions">
-                    <a href="<?php echo $propiedad['tipo'] == 'venta' ? 'ventas.php' : 'alquileres.php'; ?>" class="btn">
-                        Volver a <?php echo ucfirst($propiedad['tipo']); ?>s
+                    <a href="<?php echo ($propiedad['tipo'] === 'venta') ? 'ventas.php' : 'alquileres.php'; ?>" class="btn">
+                        Volver a <?php echo htmlspecialchars(ucfirst($propiedad['tipo'])); ?>s
                     </a>
                 </div>
             </div>
@@ -133,9 +155,9 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
             
             <div class="footer-section">
-                <p><i class="fas fa-map-marker-alt"></i> Dirección: <?php echo $config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este'; ?></p>
-                <p><i class="fas fa-phone"></i> Teléfono: <?php echo $config['telefono_contacto'] ?? '8800-3030'; ?></p>
-                <p><i class="fas fa-envelope"></i> Email: <?php echo $config['email_contacto'] ?? 'info@utnrealestate.com'; ?></p>
+                <p><i class="fas fa-map-marker-alt"></i> Dirección: <?php echo htmlspecialchars($config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este'); ?></p>
+                <p><i class="fas fa-phone"></i> Teléfono: <?php echo htmlspecialchars($config['telefono_contacto'] ?? '8800-3030'); ?></p>
+                <p><i class="fas fa-envelope"></i> Email: <?php echo htmlspecialchars($config['email_contacto'] ?? 'info@utnrealestate.com'); ?></p>
             </div>
         </div>
         
@@ -145,66 +167,20 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
     </footer>
 
     <style>
-    .property-detail {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 40px 20px;
-    }
-    
-    .property-detail h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #1a1a2e;
-    }
-    
-    .property-detail-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 40px;
-        margin-bottom: 40px;
-    }
-    
-    .property-detail-image img {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-    
-    .property-detail-info {
-        background: #f8f9fa;
-        padding: 30px;
-        border-radius: 10px;
-    }
-    
-    .property-detail-info > div {
-        margin-bottom: 20px;
-    }
-    
-    .property-agent {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-top: 20px;
-    }
-    
-    .property-description {
-        background: #f8f9fa;
-        padding: 30px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-    }
-    
-    .property-actions {
-        text-align: center;
-    }
-    
+    .property-detail { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .property-detail h1 { text-align: center; margin-bottom: 30px; color: #1a1a2e; }
+    .property-detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .property-detail-image img { width: 100%; height: 400px; object-fit: cover; border-radius: 10px; }
+    .property-detail-info { background: #f8f9fa; padding: 30px; border-radius: 10px; }
+    .property-detail-info > div { margin-bottom: 20px; }
+    .property-agent { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
+    .property-description { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 30px; }
+    .property-actions { text-align: center; }
     @media (max-width: 768px) {
-        .property-detail-grid {
-            grid-template-columns: 1fr;
-        }
+        .property-detail-grid { grid-template-columns: 1fr; }
     }
     </style>
 </body>
 </html>
+
 

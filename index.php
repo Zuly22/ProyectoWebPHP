@@ -5,43 +5,53 @@ require_once 'includes/session.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener configuración del sitio
+// Configuración del sitio
 $query = "SELECT * FROM configuracion_sitio LIMIT 1";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Obtener propiedades destacadas (últimas 3)
+// Destacadas (3)
 $query = "SELECT * FROM propiedades WHERE destacada = 1 ORDER BY fecha_creacion DESC LIMIT 3";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $destacadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener propiedades en venta (últimas 3)
+// Ventas (3)
 $query = "SELECT * FROM propiedades WHERE tipo = 'venta' ORDER BY fecha_creacion DESC LIMIT 3";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener propiedades en alquiler (últimas 3)
+// Alquileres (3)
 $query = "SELECT * FROM propiedades WHERE tipo = 'alquiler' ORDER BY fecha_creacion DESC LIMIT 3";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $alquileres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Procesar búsqueda
+// Búsqueda
 $busqueda = '';
 $resultados_busqueda = [];
-if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
-    $busqueda = $_GET['buscar'];
-    $query = "SELECT * FROM propiedades WHERE descripcion_breve LIKE :busqueda OR descripcion_larga LIKE :busqueda";
+if (isset($_GET['buscar']) && $_GET['buscar'] !== '') {
+    $busqueda = trim($_GET['buscar']);
+    $query = "SELECT * FROM propiedades 
+              WHERE descripcion_breve LIKE :busqueda OR descripcion_larga LIKE :busqueda
+              ORDER BY fecha_creacion DESC";
     $stmt = $db->prepare($query);
-    $stmt->bindValue(':busqueda', '%' . $busqueda . '%');
+    $stmt->bindValue(':busqueda', '%'.$busqueda.'%');
     $stmt->execute();
     $resultados_busqueda = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-?>
 
+// Helper de imagen con fallback
+function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
+    $path = $p['imagen_destacada'] ?? '';
+    if (!empty($path) && file_exists($path)) {
+        return htmlspecialchars($path);
+    }
+    return "/placeholder.svg?height={$h}&width={$w}";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -57,20 +67,16 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <!-- Using dynamic logo from database configuration -->
                 <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
-                    <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
+                    <img src="<?php echo htmlspecialchars($config['logo_principal']); ?>" alt="UTN Solutions Logo" class="logo-image">
                 <?php else: ?>
-                    <div class="logo-icon">
-                        <i class="fas fa-building" style="font-size: 30px;"></i>
-                    </div>
+                    <div class="logo-icon"><i class="fas fa-building" style="font-size: 30px;"></i></div>
                 <?php endif; ?>
                 <div class="logo-text">
-                    UTN SOLUTIONS<br>
-                    REAL STATE
+                    UTN SOLUTIONS<br>REAL STATE
                 </div>
             </div>
-            
+
             <nav>
                 <ul class="nav-menu">
                     <li><a href="index.php">INICIO</a></li>
@@ -80,30 +86,20 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
                     <li><a href="#contacto">CONTACTENOS</a></li>
                 </ul>
             </nav>
-            
+
             <div class="header-right">
                 <div class="social-icons">
-                    <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
+                    <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<?php echo htmlspecialchars($config['youtube_url'] ?? '#'); ?>" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
+                    <a href="<?php echo htmlspecialchars($config['instagram_url'] ?? '#'); ?>" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
                 </div>
-                
+
                 <form class="search-container" method="GET">
                     <input type="text" name="buscar" class="search-input" placeholder="Buscar propiedades..." value="<?php echo htmlspecialchars($busqueda); ?>">
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                 </form>
-                
-                <a href="login.php" class="login-icon">
-                    <i class="fas fa-user"></i>
-                </a>
+
+                <a href="login.php" class="login-icon"><i class="fas fa-user"></i></a>
             </div>
         </div>
     </header>
@@ -114,35 +110,29 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         <div class="properties-container">
             <h2>Resultados de búsqueda para: "<?php echo htmlspecialchars($busqueda); ?>"</h2>
             <div class="properties-grid">
-                <?php foreach ($resultados_busqueda as $propiedad): ?>
-                <div class="property-card">
-                    <!-- Using dynamic property images with fallback -->
-                    <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
-                        <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php else: ?>
-                        <img src="/placeholder.svg?height=200&width=350" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php endif; ?>
-                    <div class="property-info">
-                        <h3 class="property-title"><?php echo $propiedad['titulo']; ?></h3>
-                        <p class="property-description"><?php echo $propiedad['descripcion_breve']; ?></p>
-                        <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
-                        <a href="propiedad.php?id=<?php echo $propiedad['id']; ?>" class="ver-mas-btn">Ver Detalles</a>
-                    </div>
-                </div>
+                <?php foreach ($resultados_busqueda as $p): ?>
+                    <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
+                        <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
+                        <div class="property-info">
+                            <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
+                            <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
+                            <div class="property-price">₡<?php echo number_format((float)$p['precio'], 0, ',', '.'); ?></div>
+                            <span class="ver-mas-btn">Ver Detalles</span>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </div>
     </section>
+
     <?php else: ?>
-    
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-container">
             <div class="hero-content">
-                <h1><?php echo $config['mensaje_banner'] ?? 'PERMITENOS SAYUDARTE A CUMPLIR TUS SUEÑOS'; ?></h1>
-                <!-- Using dynamic banner image from database -->
+                <h1><?php echo htmlspecialchars($config['mensaje_banner'] ?? 'PERMÍTENOS AYUDARTE A CUMPLIR TUS SUEÑOS'); ?></h1>
                 <?php if (!empty($config['imagen_banner']) && file_exists($config['imagen_banner'])): ?>
-                    <img src="<?php echo $config['imagen_banner']; ?>" alt="Banner Principal" class="hero-image">
+                    <img src="<?php echo htmlspecialchars($config['imagen_banner']); ?>" alt="Banner Principal" class="hero-image">
                 <?php else: ?>
                     <img src="/placeholder.svg?height=300&width=500" alt="Casa 3D" class="hero-image">
                 <?php endif; ?>
@@ -150,17 +140,16 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About -->
     <section class="about" id="quienes-somos">
         <div class="about-container">
             <div class="about-content">
                 <h2>QUIENES SOMOS</h2>
-                <p><?php echo $config['quienes_somos_texto'] ?? 'Información sobre la empresa...'; ?></p>
+                <p><?php echo htmlspecialchars($config['quienes_somos_texto'] ?? 'Información sobre la empresa...'); ?></p>
             </div>
             <div class="about-image">
-                <!-- Using dynamic about section image -->
                 <?php if (!empty($config['imagen_quienes_somos']) && file_exists($config['imagen_quienes_somos'])): ?>
-                    <img src="<?php echo $config['imagen_quienes_somos']; ?>" alt="Quienes Somos">
+                    <img src="<?php echo htmlspecialchars($config['imagen_quienes_somos']); ?>" alt="Quienes Somos">
                 <?php else: ?>
                     <img src="/placeholder.svg?height=200&width=200" alt="Equipo">
                 <?php endif; ?>
@@ -168,124 +157,97 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- Propiedades Destacadas -->
+    <!-- Destacadas -->
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES DESTACADAS</h2>
             <div class="properties-grid">
-                <?php foreach ($destacadas as $propiedad): ?>
-                <div class="property-card">
-                    <!-- Using dynamic property images with fallback -->
-                    <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
-                        <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php else: ?>
-                        <img src="/placeholder.svg?height=200&width=350" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php endif; ?>
-                    <div class="property-info">
-                        <h3 class="property-title"><?php echo $propiedad['titulo']; ?></h3>
-                        <p class="property-description"><?php echo $propiedad['descripcion_breve']; ?></p>
-                        <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
-                    </div>
-                </div>
+                <?php foreach ($destacadas as $p): ?>
+                    <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
+                        <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
+                        <div class="property-info">
+                            <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
+                            <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
+                            <div class="property-price">₡<?php echo number_format((float)$p['precio'], 0, ',', '.'); ?></div>
+                            <span class="ver-mas-btn">Ver Detalles</span>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
             <div class="ver-mas-container">
-                <a href="destacadas.php" class="ver-mas-btn">VER MAS...</a>
+                <a href="destacadas.php" class="ver-mas-btn">VER MÁS...</a>
             </div>
         </div>
     </section>
 
-    <!-- Propiedades en Venta -->
+    <!-- Ventas -->
     <section class="properties">
         <div class="properties-container">
             <h2>PROPIEDADES EN VENTA</h2>
             <div class="properties-grid">
-                <?php foreach ($ventas as $propiedad): ?>
-                <div class="property-card">
-                    <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
-                        <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php else: ?>
-                        <img src="/placeholder.svg?height=200&width=350" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php endif; ?>
-                    <div class="property-info">
-                        <h3 class="property-title"><?php echo $propiedad['titulo']; ?></h3>
-                        <p class="property-description"><?php echo $propiedad['descripcion_breve']; ?></p>
-                        <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
-                    </div>
-                </div>
+                <?php foreach ($ventas as $p): ?>
+                    <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
+                        <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
+                        <div class="property-info">
+                            <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
+                            <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
+                            <div class="property-price">₡<?php echo number_format((float)$p['precio'], 0, ',', '.'); ?></div>
+                            <span class="ver-mas-btn">Ver Detalles</span>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
             <div class="ver-mas-container">
-                <a href="ventas.php" class="ver-mas-btn">VER MAS...</a>
+                <a href="ventas.php" class="ver-mas-btn">VER MÁS...</a>
             </div>
         </div>
     </section>
 
-    <!-- Propiedades en Alquiler -->
+    <!-- Alquileres -->
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES EN ALQUILER</h2>
             <div class="properties-grid">
-                <?php foreach ($alquileres as $propiedad): ?>
-                <div class="property-card">
-                    <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
-                        <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php else: ?>
-                        <img src="/placeholder.svg?height=200&width=350" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php endif; ?>
-                    <div class="property-info">
-                        <h3 class="property-title"><?php echo $propiedad['titulo']; ?></h3>
-                        <p class="property-description"><?php echo $propiedad['descripcion_breve']; ?></p>
-                        <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
-                    </div>
-                </div>
+                <?php foreach ($alquileres as $p): ?>
+                    <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
+                        <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
+                        <div class="property-info">
+                            <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
+                            <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
+                            <div class="property-price">₡<?php echo number_format((float)$p['precio'], 0, ',', '.'); ?></div>
+                            <span class="ver-mas-btn">Ver Detalles</span>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
             <div class="ver-mas-container">
-                <a href="alquileres.php" class="ver-mas-btn">VER MAS...</a>
+                <a href="alquileres.php" class="ver-mas-btn">VER MÁS...</a>
             </div>
         </div>
     </section>
-
     <?php endif; ?>
 
     <!-- Footer -->
     <footer class="footer" id="contacto">
         <div class="footer-container">
             <div class="footer-section">
-                <div class="logo">
-                    <!-- Using dynamic white logo in footer -->
-                    <?php if (!empty($config['logo_blanco']) && file_exists($config['logo_blanco'])): ?>
-                        <img src="<?php echo $config['logo_blanco']; ?>" alt="UTN Solutions Logo" class="logo-image" style="filter: brightness(0);">
-                    <?php else: ?>
-                        <div class="logo-icon">
-                            <i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i>
-                        </div>
-                    <?php endif; ?>
-                    <div class="logo-text" style="color: #1a1a2e;">
-                        UTN SOLUTIONS<br>
-                        REAL STATE
-                    </div>
+                <?php if (!empty($config['logo_blanco']) && file_exists($config['logo_blanco'])): ?>
+                    <img src="<?php echo htmlspecialchars($config['logo_blanco']); ?>" alt="UTN Solutions Logo" class="logo-image" style="filter: brightness(0);">
+                <?php else: ?>
+                    <div class="logo-icon"><i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i></div>
+                <?php endif; ?>
+                <div class="logo-text" style="color: #1a1a2e;">
+                    UTN SOLUTIONS<br>REAL STATE
                 </div>
                 <div class="social-icons" style="margin-top: 20px;">
-                    <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
+                    <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<?php echo htmlspecialchars($config['youtube_url'] ?? '#'); ?>" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
+                    <a href="<?php echo htmlspecialchars($config['instagram_url'] ?? '#'); ?>" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-            
+
             <div class="footer-section">
-                <h3>Contactenos</h3>
-                <p><strong>Nombre:</strong></p>
-                <p><strong>Email:</strong></p>
-                <p><strong>Teléfono:</strong></p>
-                <p><strong>Mensaje:</strong></p>
+                <h3>Contáctenos</h3>
                 <form class="contact-form" method="POST" action="enviar_mensaje.php">
                     <input type="text" name="nombre" placeholder="Nombre" required>
                     <input type="email" name="email" placeholder="Email" required>
@@ -294,18 +256,17 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
                     <button type="submit">Enviar</button>
                 </form>
             </div>
-            
+
             <div class="footer-section">
-                <p><i class="fas fa-map-marker-alt"></i> Dirección: <?php echo $config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este'; ?></p>
-                <p><i class="fas fa-phone"></i> Teléfono: <?php echo $config['telefono_contacto'] ?? '8800-3030'; ?></p>
-                <p><i class="fas fa-envelope"></i> Email: <?php echo $config['email_contacto'] ?? 'info@utnrealestate.com'; ?></p>
+                <p><i class="fas fa-map-marker-alt"></i> Dirección: <?php echo htmlspecialchars($config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este'); ?></p>
+                <p><i class="fas fa-phone"></i> Teléfono: <?php echo htmlspecialchars($config['telefono_contacto'] ?? '8800-3030'); ?></p>
+                <p><i class="fas fa-envelope"></i> Email: <?php echo htmlspecialchars($config['email_contacto'] ?? 'info@utnrealestate.com'); ?></p>
             </div>
         </div>
-        
+
         <div class="footer-bottom">
             <p>Derechos Reservados 2024</p>
         </div>
     </footer>
 </body>
 </html>
-
