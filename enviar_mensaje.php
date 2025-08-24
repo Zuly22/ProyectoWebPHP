@@ -1,11 +1,15 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require __DIR__ . '/vendor/autoload.php';
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre   = trim($_POST['nombre'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $telefono = trim($_POST['telefono'] ?? '');
     $mensaje  = trim($_POST['mensaje'] ?? '');
 
-    // Validaciones básicas
     if ($nombre === '' || $email === '' || $mensaje === '') {
         echo "<script>alert('Por favor complete todos los campos requeridos'); window.location.href='index.php#contacto';</script>";
         exit;
@@ -15,24 +19,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Configuración del correo
-    $to      = "info@utnrealestate.com"; // Cambia por tu correo real
-    $subject = "Nuevo mensaje desde el sitio web";
-    $body    = "Has recibido un nuevo mensaje:\n\n".
-               "Nombre: $nombre\n".
-               "Email: $email\n".
-               "Teléfono: $telefono\n\n".
-               "Mensaje:\n$mensaje\n";
+    $mail = new PHPMailer(true);
 
-    $headers = "From: no-reply@utnrealestate.com\r\n";
-    $headers .= "Reply-To: $email\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'inmobiliariopro02@gmail.com';
+        $mail->Password   = 'vktf xmtj alho yqfp';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-    // Enviar
-    if (mail($to, $subject, $body, $headers)) {
+        $mail->setFrom('inmobiliariopro02@gmail.com', 'Inmobiliaria S.A.');
+        
+        $mail->addAddress("info@utninmobiliaria.com", "Admin UTN Inmobiliaria"); // correo oficial
+        $mail->addReplyTo($email, $nombre); 
+        $mail->addBCC($email, $nombre); 
+
+        $mail->isHTML(false); 
+        $mail->Subject = "Nuevo mensaje desde el sitio web";
+        $mail->Body    = "Has recibido un nuevo mensaje:\n\n".
+                         "Nombre: $nombre\n".
+                         "Email: $email\n".
+                         "Teléfono: $telefono\n\n".
+                         "Mensaje:\n$mensaje\n";
+
+        $mail->send();
         echo "<script>alert('✅ Mensaje enviado correctamente'); window.location.href='index.php#contacto';</script>";
-    } else {
-        echo "<script>alert('❌ Error al enviar el mensaje, inténtelo más tarde'); window.location.href='index.php#contacto';</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('❌ Error al enviar el mensaje: {$mail->ErrorInfo}'); window.location.href='index.php#contacto';</script>";
     }
 } else {
     header('Location: index.php');
