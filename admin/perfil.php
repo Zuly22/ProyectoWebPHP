@@ -70,7 +70,8 @@ $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
                         <a href="usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a>
                     <?php endif; ?>
                     <a href="propiedades.php"><i class="fas fa-building"></i> Propiedades</a>
-                    <a href="perfil.php"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="galeria.php"><i class="fas fa-images"></i> Galería de Imágenes</a>
+                    <a href="perfil.php"><i class="fas fa-building"></i> Mi perfil</a>
                     <a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                 </div>
             </div>

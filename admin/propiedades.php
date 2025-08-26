@@ -10,22 +10,16 @@ $db = $database->getConnection();
 $es_admin = isset($_SESSION['privilegio']) && $_SESSION['privilegio'] === 'administrador';
 $user_id  = $_SESSION['user_id'] ?? 0;
 
-/* -------------------------
-   CSRF helpers (locales)
-------------------------- */
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 function csrf_token() { return $_SESSION['csrf']; }
 function csrf_check($t) { return isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $t); }
 
-/* -------------------------
-   Util: subir imagen segura
-------------------------- */
 function subir_imagen($campo_input, $carpeta_rel = '../uploads')
 {
     if (empty($_FILES[$campo_input]['name']) || $_FILES[$campo_input]['error'] === UPLOAD_ERR_NO_FILE) {
-        return null; // no cambia
+        return null; 
     }
 
     if (!is_dir($carpeta_rel)) {
@@ -36,12 +30,10 @@ function subir_imagen($campo_input, $carpeta_rel = '../uploads')
         throw new RuntimeException('Error al subir el archivo.');
     }
 
-    // Límite de 5 MB
     if ($_FILES[$campo_input]['size'] > 5 * 1024 * 1024) {
         throw new RuntimeException('La imagen excede 5MB.');
     }
 
-    // Validación MIME
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime  = finfo_file($finfo, $_FILES[$campo_input]['tmp_name']);
     finfo_close($finfo);
@@ -50,7 +42,6 @@ function subir_imagen($campo_input, $carpeta_rel = '../uploads')
         throw new RuntimeException('Tipo de imagen no permitido.');
     }
 
-    // Nombre único
     $ext   = $permitidos[$mime];
     $fname = 'propiedad_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
 
@@ -60,17 +51,12 @@ function subir_imagen($campo_input, $carpeta_rel = '../uploads')
         throw new RuntimeException('No se pudo mover el archivo subido.');
     }
 
-    // Guardar ruta relativa desde /admin a raíz del sitio: usamos carpeta ../uploads
-    // Para mostrar en front, la ruta correcta será "uploads/archivo.ext"
     return 'uploads/' . $fname;
 }
 
 $mensaje = '';
 $errores = [];
 
-/* -------------------------
-   Acciones: eliminar
-------------------------- */
 if (isset($_GET['accion']) && $_GET['accion'] === 'eliminar' && isset($_GET['id'])) {
     try {
         $id = (int)$_GET['id'];
@@ -104,16 +90,12 @@ if (isset($_GET['editar'])) {
     $propiedad_editar = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-/* -------------------------
-   Procesar creación / edición
-------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (!csrf_check($_POST['csrf'] ?? '')) {
             throw new RuntimeException('CSRF inválido.');
         }
 
-        // Sanitizar/validar inputs
         $tipo      = $_POST['tipo'] ?? '';
         $destacada = isset($_POST['destacada']) ? 1 : 0;
         $titulo    = trim($_POST['titulo'] ?? '');
@@ -127,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($titulo === '') { $errores[] = 'El título es obligatorio.'; }
         if ($precio === '' || !is_numeric($precio)) { $errores[] = 'Precio inválido.'; }
 
-        // agente_id: si admin, puede elegir; si agente, se fuerza al propio
         if ($es_admin) {
             $agente_id = (int)($_POST['agente_id'] ?? 0);
             if ($agente_id <= 0) { $errores[] = 'Seleccione un agente de ventas.'; }
@@ -135,12 +116,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $agente_id = $user_id;
         }
 
-        // Imagen (opcional)
         $imagen_destacada = null;
         if (!empty($_FILES['imagen_destacada']['name'])) {
             $imagen_destacada = subir_imagen('imagen_destacada', '../uploads');
         } else {
-            // Mantener imagen si viene campo oculto con actual
             if (!empty($_POST['imagen_actual'])) {
                 $imagen_destacada = $_POST['imagen_actual'];
             }
@@ -148,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$errores) {
             if (!empty($_POST['id'])) {
-                // UPDATE
                 $id = (int)$_POST['id'];
                 $where_clause = $es_admin ? '' : ' AND agente_id = :agente_id';
 
@@ -186,7 +164,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $mensaje = '<div class="alert alert-warning">No se realizaron cambios</div>';
                 }
             } else {
-                // INSERT
                 $query = "INSERT INTO propiedades
                           (tipo, destacada, titulo, descripcion_breve, precio, agente_id, imagen_destacada, descripcion_larga, mapa, ubicacion, fecha_creacion)
                           VALUES
@@ -211,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             $mensaje = '<div class="alert alert-danger">'.implode('<br>', array_map('htmlspecialchars', $errores)).'</div>';
-            // Mantener datos en edición
+        
             $propiedad_editar = [
                 'id' => $_POST['id'] ?? null,
                 'tipo' => $tipo,
@@ -231,9 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* -------------------------
-   Listado (admin: todas; agente: solo suyas)
-------------------------- */
 $where_clause = $es_admin ? '' : ' WHERE p.agente_id = :agente_id';
 $query_list = "SELECT p.*, u.nombre AS agente_nombre 
                FROM propiedades p 
@@ -245,9 +219,6 @@ if (!$es_admin) { $stmt_list->bindValue(':agente_id', $user_id, PDO::PARAM_INT);
 $stmt_list->execute();
 $lista = $stmt_list->fetchAll(PDO::FETCH_ASSOC);
 
-/* -------------------------
-   Para combo de agentes (solo admin)
-------------------------- */
 $agentes = [];
 if ($es_admin) {
     $stmt_ag = $db->query("SELECT id, nombre FROM usuarios ORDER BY nombre ASC");
@@ -260,6 +231,7 @@ if ($es_admin) {
     <meta charset="UTF-8">
     <title><?php echo $es_admin ? 'Administrar Propiedades' : 'Mis Propiedades'; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
         body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f5f6f8;margin:0}
         .container{max-width:1100px;margin:30px auto;padding:0 16px}
@@ -289,10 +261,17 @@ if ($es_admin) {
 <body>
 <div class="container">
 
-    <div class="card">
-        <h1><i class="fas fa-home"></i> <?php echo $es_admin ? 'Administrar Propiedades' : 'Mis Propiedades'; ?></h1>
-        <p style="margin:0;color:#6b7280">Desde aquí puedes crear, editar y eliminar propiedades.</p>
-        <?php echo $mensaje; ?>
+   <div class="admin-header">
+        <h1>Gestionar Propiedades</h1>
+        <div class="admin-nav">
+            <a href="dashboard.php"><i class="fas fa-home"></i> Inicio</a>
+            <a href="personalizar.php"><i class="fas fa-palette"></i> Personalizar Página</a>
+            <a href="usuarios.php"><i class="fas fa-users"></i> Gestionar Usuarios</a>
+            <a href="propiedades.php"><i class="fas fa-building"></i> Propiedades</a>
+            <a href="galeria.php"><i class="fas fa-images"></i> Galería de Imágenes</a>
+            <a href="perfil.php"><i class="fas fa-building"></i> Mi perfil</a>
+            <a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
     </div>
 
     <div class="card">
