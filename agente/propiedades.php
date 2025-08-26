@@ -229,7 +229,6 @@ if (isset($_GET['edit'])) {
         <?php if ($message): ?><div class="alert alert-success"><?= $message; ?></div><?php endif; ?>
         <?php if ($error): ?><div class="alert alert-error"><?= $error; ?></div><?php endif; ?>
 
-        <!-- Formulario -->
         <div class="form-section">
             <h2><?= $editing_property ? 'Editar Propiedad' : 'Agregar Nueva Propiedad'; ?></h2>
             <form method="POST" enctype="multipart/form-data" class="admin-form">
@@ -340,7 +339,6 @@ if (isset($_GET['edit'])) {
       <tr>
         <td>
           <?php
-            // Usa la misma lógica de admin para evitar imágenes rotas
             $img = $p['imagen'] ?? '';
             $imgPath = !empty($img) ? '../'.$img : '';
             if (!empty($imgPath) && file_exists($imgPath)):
@@ -364,12 +362,10 @@ if (isset($_GET['edit'])) {
         <td><?php echo !empty($p['destacada']) ? 'Sí' : 'No'; ?></td>
 
         <td>
-          <!-- Editar (mantengo tu ruta de agente) -->
           <a class="btn warning" href="propiedades.php?edit=<?php echo (int)$p['id']; ?>">
             <i class="fas fa-edit"></i> Editar
           </a>
 
-          <!-- Eliminar por POST (mismo diseño que admin con .btn.danger) -->
           <form method="POST" style="display:inline"
                 onsubmit="return confirm('¿Estás seguro de eliminar esta propiedad?')">
             <input type="hidden" name="action" value="delete">
@@ -379,7 +375,6 @@ if (isset($_GET['edit'])) {
             </button>
           </form>
 
-          <!-- Ver pública -->
           <a class="btn secondary" target="_blank"
              href="../propiedad.php?id=<?php echo (int)$p['id']; ?>">
             <i class="fas fa-external-link-alt"></i> Ver

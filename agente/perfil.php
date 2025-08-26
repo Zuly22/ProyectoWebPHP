@@ -91,9 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
         <main class="admin-content">
-            <div class="admin-header">
-                <h1>Mi Perfil</h1>
-            </div>
 
             <?php if ($message): ?>
                 <div class="alert alert-success"><?php echo $message; ?></div>
