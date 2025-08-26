@@ -56,7 +56,7 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
             
             <div class="header-right">
                 <div class="social-icons">
-                    <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
+                    <a href="<?php echo $config['facebook_url'] ?? 'www.facebook.com'; ?>" class="social-icon facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
                     <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
