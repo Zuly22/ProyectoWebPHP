@@ -126,7 +126,7 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
               <div class="property-info">
                 <h3 class="property-title"><?php echo htmlspecialchars($prop['titulo']); ?></h3>
                 <p class="property-description"><?php echo htmlspecialchars($prop['descripcion_breve']); ?></p>
-                <div class="property-price">Precio: $<?php echo number_format((float)$prop['precio']); ?></div>
+                <div class="property-price">Precio: ₡<?php echo number_format((float)$prop['precio']); ?></div>
                 <a href="propiedad.php?id=<?php echo (int)$prop['id']; ?>" class="ver-mas-btn">Ver Detalles</a>
               </div>
             </div>
