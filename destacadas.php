@@ -4,13 +4,17 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener todas las propiedades destacadas
+function asset_exists(string $path): bool {
+    if ($path === '') return false;
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    return is_file($abs);
+}
+
 $query = "SELECT * FROM propiedades WHERE destacada = 1 ORDER BY fecha_creacion DESC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener configuración del sitio
 $query = "SELECT * FROM configuracion_sitio LIMIT 1";
 $stmt = $db->prepare($query);
 $stmt->execute();

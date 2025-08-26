@@ -4,6 +4,12 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
+function asset_exists(string $path): bool {
+    if ($path === '') return false;
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    return is_file($abs);
+}
+
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 $query = "SELECT p.*, u.nombre as agente_nombre, u.telefono as agente_telefono, u.correo as agente_correo 

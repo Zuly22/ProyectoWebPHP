@@ -14,6 +14,12 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC);
 
+function asset_exists(string $path): bool {
+    if ($path === '') return false;
+    $abs = __DIR__ . '/' . ltrim($path, '/');
+    return is_file($abs);
+}
+
 ?>
 
 <!DOCTYPE html>
