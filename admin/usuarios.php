@@ -135,11 +135,6 @@ if (isset($_GET['editar'])) {
                     </div>
                     
                     <div class="form-group">
-                        <label>Email:</label>
-                        <input type="email" name="email" value="<?php echo $usuario_editar ? htmlspecialchars($usuario_editar['email']) : ''; ?>">
-                    </div>
-                    
-                    <div class="form-group">
                         <label>Usuario:</label>
                         <input type="text" name="usuario" value="<?php echo $usuario_editar ? htmlspecialchars($usuario_editar['usuario']) : ''; ?>" required>
                     </div>
