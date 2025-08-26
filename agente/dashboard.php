@@ -50,7 +50,7 @@ $stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
         <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></p>
 
         <div class="admin-nav">
-          <a href="dashboard_agente.php" class="active"><i class="fas fa-home"></i> Inicio</a>
+          <a href="dashboard.php" class="active"><i class="fas fa-home"></i> Inicio</a>
           <a href="propiedades.php"><i class="fas fa-building"></i> Mis Propiedades</a>
           <a href="perfil.php"><i class="fas fa-user"></i> Mi Perfil</a>
           <a href="../index.php"><i class="fas fa-globe"></i> Ver Sitio Web</a>
