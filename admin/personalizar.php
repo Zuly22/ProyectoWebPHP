@@ -9,21 +9,17 @@ $db = $database->getConnection();
 
 $mensaje = '';
 
-// Procesar formulario
 if ($_POST) {
     try {
-        // Handle file uploads
         $imagen_banner = $_POST['imagen_banner_actual'];
         $imagen_quienes_somos = $_POST['imagen_quienes_somos_actual'];
         $logo_principal = $_POST['logo_principal_actual'];
         $logo_blanco = $_POST['logo_blanco_actual'];
         
-        // Create uploads directory if it doesn't exist
         if (!file_exists('../uploads')) {
             mkdir('../uploads', 0777, true);
         }
         
-        // Handle banner image upload
         if (isset($_FILES['imagen_banner']) && $_FILES['imagen_banner']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $filename = $_FILES['imagen_banner']['name'];
@@ -37,7 +33,6 @@ if ($_POST) {
             }
         }
         
-        // Handle quienes somos image upload
         if (isset($_FILES['imagen_quienes_somos']) && $_FILES['imagen_quienes_somos']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $filename = $_FILES['imagen_quienes_somos']['name'];
@@ -51,7 +46,6 @@ if ($_POST) {
             }
         }
         
-        // Handle logo principal upload
         if (isset($_FILES['logo_principal']) && $_FILES['logo_principal']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $filename = $_FILES['logo_principal']['name'];
@@ -65,7 +59,6 @@ if ($_POST) {
             }
         }
         
-        // Handle logo blanco upload
         if (isset($_FILES['logo_blanco']) && $_FILES['logo_blanco']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $filename = $_FILES['logo_blanco']['name'];
@@ -118,7 +111,6 @@ if ($_POST) {
     }
 }
 
-// Obtener configuración actual
 $query = "SELECT * FROM configuracion_sitio LIMIT 1";
 $stmt = $db->prepare($query);
 $stmt->execute();
@@ -172,7 +164,6 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
             <div class="admin-content">
                 <?php echo $mensaje; ?>
                 
-                <!-- Adding enctype for file uploads -->
                 <form method="POST" enctype="multipart/form-data">
                     
                     <div class="form-section">
@@ -188,7 +179,6 @@ $config = $stmt->fetch(PDO::FETCH_ASSOC);
                         </div>
                     </div>
 
-                    <!-- Adding image upload sections -->
                     <div class="form-section">
                         <h3><i class="fas fa-images"></i> Imágenes del Sitio</h3>
                         

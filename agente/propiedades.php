@@ -2,7 +2,6 @@
 require_once '../config/database.php';
 require_once '../includes/session.php';
 
-// Verificar login y rol
 if (!isset($_SESSION['user_id']) || $_SESSION['privilegio'] !== 'agente_ventas') {
     header("Location: ../login.php");
     exit();
@@ -14,14 +13,12 @@ $db = $database->getConnection();
 $message = '';
 $error   = '';
 
-// ========== HANDLER FORM ==========
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
 
     if ($action === 'add') {
-        // Campos
         $titulo             = trim($_POST['titulo'] ?? '');
-        $descripcion_breve  = trim($_POST['descripcion'] ?? ''); // en el form se llama "descripcion"
+        $descripcion_breve  = trim($_POST['descripcion'] ?? '');
         $precio             = (float)($_POST['precio'] ?? 0);
         $tipo               = $_POST['tipo'] ?? '';
         $destacada          = isset($_POST['destacada']) ? 1 : 0;
@@ -29,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $ubicacion          = trim($_POST['ubicacion'] ?? '');
         $mapa               = trim($_POST['mapa'] ?? '');
 
-        // Subida de imagen
         $imagen = '';
         if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $upload_dir = '../uploads/propiedades/';
@@ -41,11 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $filepath  = $upload_dir . $filename;
 
             if (move_uploaded_file($_FILES['imagen']['tmp_name'], $filepath)) {
-                $imagen = 'uploads/propiedades/' . $filename; // ruta pública
+                $imagen = 'uploads/propiedades/' . $filename;
             }
         }
 
-        // INSERT usando nombres reales
         $sql = "INSERT INTO propiedades
                   (titulo, descripcion_breve, precio, tipo, destacada, agente_id,
                    imagen_destacada, descripcion_larga, ubicacion, mapa)
@@ -82,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $ubicacion         = trim($_POST['ubicacion'] ?? '');
         $mapa              = trim($_POST['mapa'] ?? '');
 
-        // verificar propietario + traer imagen actual
         $qCheck = "SELECT imagen_destacada
                    FROM propiedades
                    WHERE id = :id AND agente_id = :agente_id";
@@ -97,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $current = $stCheck->fetch(PDO::FETCH_ASSOC);
             $imagen = $current['imagen_destacada'] ?? '';
 
-            // Nueva imagen (opcional)
             if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
                 $upload_dir = '../uploads/propiedades/';
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
@@ -107,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $filepath = $upload_dir . $filename;
 
                 if (move_uploaded_file($_FILES['imagen']['tmp_name'], $filepath)) {
-                    // borrar la anterior si existe
                     if (!empty($imagen) && file_exists('../' . $imagen)) {
                         @unlink('../' . $imagen);
                     }
@@ -115,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
-            // UPDATE con nombres reales
             $sql = "UPDATE propiedades SET
                         titulo = :titulo,
                         descripcion_breve = :descripcion_breve,
@@ -151,7 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
 
-        // verificar propietario + traer imagen
         $qCheck = "SELECT imagen_destacada
                    FROM propiedades
                    WHERE id = :id AND agente_id = :agente_id";
@@ -171,7 +161,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->bindValue(':agente_id', $_SESSION['user_id'], PDO::PARAM_INT);
 
             if ($stmt->execute()) {
-                // borrar imagen física
                 if (!empty($prop['imagen_destacada']) && file_exists('../' . $prop['imagen_destacada'])) {
                     @unlink('../' . $prop['imagen_destacada']);
                 }
@@ -183,9 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// ========== QUERIES PARA VISTA ==========
-
-// Lista de propiedades del agente (alias imagen)
 $qList = "SELECT
             id, titulo, tipo, precio, ubicacion, destacada,
             COALESCE(imagen_destacada,'') AS imagen
@@ -197,13 +183,12 @@ $stList->bindValue(':agente_id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stList->execute();
 $propiedades = $stList->fetchAll(PDO::FETCH_ASSOC);
 
-// Si se está editando, obtener datos (alias imagen)
 $editing_property = null;
 if (isset($_GET['edit'])) {
     $edit_id = (int)$_GET['edit'];
     $qEdit = "SELECT
                 id, titulo, tipo, precio, ubicacion, destacada, mapa,
-                descripcion_breve AS descripcion,  -- para rellenar tu textarea 'descripcion'
+                descripcion_breve AS descripcion, 
                 descripcion_larga,
                 COALESCE(imagen_destacada,'') AS imagen
               FROM propiedades
@@ -336,8 +321,6 @@ if (isset($_GET['edit'])) {
                 </div>
             </form>
         </div>
-
-        <!-- Lista -->
         <div class="table-section">
             <h2>Mis Propiedades</h2>
             <div class="table-container">

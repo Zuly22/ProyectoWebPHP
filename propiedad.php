@@ -77,15 +77,15 @@ if (!empty($propiedad['mapa'])) {
         </div>
 
         <div class="header-right">
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.php">INICIO</a></li>
-                    <li><a href="#quienes-somos">QUIENES SOMOS</a></li>
-                    <li><a href="alquileres.php">ALQUILERES</a></li>
-                    <li><a href="ventas.php">VENTAS</a></li>
-                    <li><a href="#contacto">CONTACTENOS</a></li>
-                </ul>
-            </nav>
+             <nav>
+          <ul class="nav-menu nav-with-pipes">
+            <li><a href="index.php">INICIO</a></li>
+            <li><a href="index.php#quienes-somos">QUIENES SOMOS</a></li>
+            <li><a href="alquileres.php">ALQUILERES</a></li>
+            <li><a href="ventas.php">VENTAS</a></li>
+            <li><a href="index.php#contacto">CONTACTENOS</a></li>
+          </ul>
+        </nav>
         </div>
     </div>
 </header>
@@ -102,7 +102,7 @@ if (!empty($propiedad['mapa'])) {
                     
                     <div class="property-detail-info">
                         <div class="property-price" style="font-size: 2rem; margin-bottom: 20px;">
-                            $<?php echo number_format((float)$propiedad['precio']); ?>
+                            ₡<?php echo number_format((float)$propiedad['precio']); ?>
                         </div>
                         
                         <div class="property-type">
@@ -147,31 +147,58 @@ if (!empty($propiedad['mapa'])) {
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i>
-                    </div>
-                    <div class="logo-text" style="color: #ffffffff;">
-                        UTN SOLUTIONS<br>
-                        REAL STATE
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <p><i class="fas fa-map-marker-alt"></i> Dirección: <?php echo htmlspecialchars($config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este'); ?></p>
-                <p><i class="fas fa-phone"></i> Teléfono: <?php echo htmlspecialchars($config['telefono_contacto'] ?? '8800-3030'); ?></p>
-                <p><i class="fas fa-envelope"></i> Email: <?php echo htmlspecialchars($config['email_contacto'] ?? 'info@utnrealestate.com'); ?></p>
-            </div>
+    <footer class="footer" id="contacto">
+    <div class="footer-container">
+      <div class="footer-section">
+        <p><i class="fas fa-map-marker-alt"></i> <b>Dirección:</b> <?php echo htmlspecialchars($config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este Parque de Cañas'); ?></p>
+        <p><i class="fas fa-phone"></i> <b>Teléfono:</b> <?php echo htmlspecialchars($config['telefono_contacto'] ?? '8890-2030'); ?></p>
+        <p><i class="fas fa-envelope"></i> <b>Email:</b> <?php echo htmlspecialchars($config['email_contacto'] ?? 'info@utnrealestate.com'); ?></p>
+      </div>
+
+    
+      <div class="footer-section" style="text-align:center;">
+        <?php if (!empty($config['logo_blanco']) && asset_exists($config['logo_blanco'])): ?>
+          <img src="<?php echo htmlspecialchars($config['logo_blanco']); ?>" alt="UTN Solutions Logo" class="logo-image" style="max-width:80px;margin-bottom:10px;">
+        <?php else: ?>
+          <div class="logo-icon"><i class="fas fa-building" style="font-size:40px;"></i></div>
+        <?php endif; ?>
+        <div class="logo-text">UTN SOLUTIONS<br>REAL STATE</div>
+        <div class="social-icons">
+          <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="<?php echo htmlspecialchars($config['youtube_url'] ?? '#'); ?>" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
+          <a href="<?php echo htmlspecialchars($config['instagram_url'] ?? '#'); ?>" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
         </div>
-        
-        <div class="footer-bottom">
-            <p>Derechos Reservados 2024</p>
-        </div>
-    </footer>
+      </div>
+
+     
+      <div class="footer-section">
+        <form class="contact-form" method="POST" action="enviar_mensaje.php">
+          <div style="font-weight:bold;margin-bottom:10px;text-align:center;">Contáctanos</div>
+          <div class="contact-form-row">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombre" required>
+          </div>
+          <div class="contact-form-row">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+          </div>
+          <div class="contact-form-row">
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" name="telefono" id="telefono" required>
+          </div>
+          <div class="contact-form-row">
+            <label for="mensaje">Mensaje:</label>
+            <textarea name="mensaje" id="mensaje" rows="2" required></textarea>
+          </div>
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>@ Derechos Reservados 2025 - UTN Solutions Real State</p>
+    </div>
+  </footer>
 
     <style>
     .property-detail { 

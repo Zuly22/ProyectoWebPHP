@@ -57,7 +57,6 @@ if ($_POST && isset($_POST['action'])) {
     }
 }
 
-// Obtener todas las imágenes
 $query = "SELECT * FROM imagenes_sitio ORDER BY fecha_subida DESC";
 $stmt = $db->prepare($query);
 $stmt->execute();

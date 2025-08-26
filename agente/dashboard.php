@@ -2,7 +2,6 @@
 require_once '../config/database.php';
 require_once '../includes/session.php';
 
-// Verificar que el usuario esté logueado y sea agente de ventas
 if (!isset($_SESSION['user_id']) || $_SESSION['privilegio'] !== 'agente_ventas') {
     header("Location: ../login.php");
     exit();
@@ -11,7 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['privilegio'] !== 'agente_ventas')
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener propiedades del agente (alias imagen_destacada como imagen)
 $query = "SELECT 
             id, titulo, tipo, precio, destacada,
             COALESCE(imagen_destacada, '') AS imagen
@@ -23,7 +21,6 @@ $stmt->bindParam(':agente_id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stmt->execute();
 $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Contar propiedades por tipo
 $query_stats = "SELECT 
     COUNT(*) as total,
     SUM(CASE WHEN tipo = 'venta' THEN 1 ELSE 0 END) as ventas,

@@ -5,19 +5,16 @@ require_once 'includes/session.php';
 $database = new Database();
 $db = $database->getConnection();
 
-/* Helper para verificar archivos con rutas relativas tipo 'uploads/...' */
 function asset_exists(string $path): bool {
     if ($path === '') return false;
     $abs = __DIR__ . '/' . ltrim($path, '/');
     return is_file($abs);
 }
 
-/* Config del sitio */
 $stmt = $db->prepare("SELECT * FROM configuracion_sitio LIMIT 1");
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-/* Propiedades */
 $stmt = $db->prepare("SELECT id, titulo, descripcion_breve, precio, imagen_destacada 
                       FROM propiedades 
                       WHERE destacada = 1 
@@ -39,7 +36,6 @@ $stmt = $db->prepare("SELECT id, titulo, descripcion_breve, precio, imagen_desta
 $stmt->execute();
 $alquileres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* Búsqueda */
 $busqueda = trim($_GET['buscar'] ?? '');
 $resultados_busqueda = [];
 if ($busqueda !== '') {
@@ -53,7 +49,6 @@ if ($busqueda !== '') {
     $resultados_busqueda = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-/* Estilo de fondo del hero con overlay si hay imagen en BD */
 $hero_style = '';
 if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) {
     $url = htmlspecialchars($config['imagen_banner']);
@@ -70,11 +65,10 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 </head>
 <body class="tema-<?php echo htmlspecialchars($config['tema_color'] ?? 'azul'); ?>">
-
-  <!-- Header estilo maqueta -->
+  <a href="login.php" class="login-icon"><i class="fas fa-user"></i></a>
   <header class="header">
     <div class="header-container">
-      <!-- Izquierda: logo + redes -->
+
       <div class="brand-block">
         <div class="logo">
           <?php if (!empty($config['logo_principal']) && asset_exists($config['logo_principal'])): ?>
@@ -92,7 +86,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
         </div>
       </div>
 
-      <!-- Derecha: menú | buscador | login -->
       <div class="header-right">
         <nav>
           <ul class="nav-menu nav-with-pipes">
@@ -103,19 +96,20 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
             <li><a href="#contacto">CONTACTENOS</a></li>
           </ul>
         </nav>
-
+        
         <form class="nav-search" method="GET" action="index.php">
           <input type="text" name="buscar" class="nav-search-input" placeholder="Buscar..." value="<?php echo htmlspecialchars($busqueda); ?>">
           <button type="submit" class="nav-search-btn"><i class="fas fa-search"></i></button>
         </form>
-
-        <a href="login.php" class="login-icon"><i class="fas fa-user"></i></a>
       </div>
     </div>
   </header>
 
+
+        
+
   <?php if (!empty($resultados_busqueda)): ?>
-    <!-- Resultados de búsqueda -->
+
     <section class="properties">
       <div class="properties-container">
         <h2>Resultados de búsqueda para: "<?php echo htmlspecialchars($busqueda); ?>"</h2>
@@ -141,7 +135,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
 
   <?php else: ?>
 
-    <!-- Hero con imagen de fondo + overlay (si hay imagen en BD) -->
     <section class="hero" <?php echo $hero_style; ?>>
       <div class="hero-container">
         <div class="hero-content">
@@ -150,7 +143,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
       </div>
     </section>
 
-    <!-- Quiénes somos -->
     <section class="about" id="quienes-somos">
       <div class="about-container">
         <div class="about-content">
@@ -167,7 +159,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
       </div>
     </section>
 
-    <!-- Destacadas -->
     <section class="properties dark">
       <div class="properties-container">
         <h2>PROPIEDADES DESTACADAS</h2>
@@ -182,7 +173,7 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
               <div class="property-info">
                 <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
                 <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
-                <div class="property-price">Precio: $<?php echo number_format((float)$p['precio']); ?></div>
+                <div class="property-price">Precio: ₡<?php echo number_format((float)$p['precio']); ?></div>
               </div>
             </div>
           <?php endforeach; ?>
@@ -193,7 +184,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
       </div>
     </section>
 
-    <!-- Ventas -->
     <section class="properties">
       <div class="properties-container">
         <h2>PROPIEDADES EN VENTA</h2>
@@ -208,7 +198,7 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
               <div class="property-info">
                 <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
                 <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
-                <div class="property-price">Precio: $<?php echo number_format((float)$p['precio']); ?></div>
+                <div class="property-price">Precio: ₡<?php echo number_format((float)$p['precio']); ?></div>
               </div>
             </div>
           <?php endforeach; ?>
@@ -219,7 +209,6 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
       </div>
     </section>
 
-    <!-- Alquileres -->
     <section class="properties dark">
       <div class="properties-container">
         <h2>PROPIEDADES EN ALQUILER</h2>
@@ -234,7 +223,7 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
               <div class="property-info">
                 <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
                 <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
-                <div class="property-price">Precio: $<?php echo number_format((float)$p['precio']); ?></div>
+                <div class="property-price">Precio: ₡<?php echo number_format((float)$p['precio']); ?></div>
               </div>
             </div>
           <?php endforeach; ?>
@@ -247,17 +236,15 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
 
   <?php endif; ?>
 
-  <!-- Footer -->
   <footer class="footer" id="contacto">
     <div class="footer-container">
-      <!-- Columna izquierda -->
       <div class="footer-section">
         <p><i class="fas fa-map-marker-alt"></i> <b>Dirección:</b> <?php echo htmlspecialchars($config['direccion'] ?? 'Cañas Guanacaste, 100 mts Este Parque de Cañas'); ?></p>
         <p><i class="fas fa-phone"></i> <b>Teléfono:</b> <?php echo htmlspecialchars($config['telefono_contacto'] ?? '8890-2030'); ?></p>
         <p><i class="fas fa-envelope"></i> <b>Email:</b> <?php echo htmlspecialchars($config['email_contacto'] ?? 'info@utnrealestate.com'); ?></p>
       </div>
 
-      <!-- Columna central -->
+    
       <div class="footer-section" style="text-align:center;">
         <?php if (!empty($config['logo_blanco']) && asset_exists($config['logo_blanco'])): ?>
           <img src="<?php echo htmlspecialchars($config['logo_blanco']); ?>" alt="UTN Solutions Logo" class="logo-image" style="max-width:80px;margin-bottom:10px;">
@@ -272,7 +259,7 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
         </div>
       </div>
 
-      <!-- Columna derecha -->
+     
       <div class="footer-section">
         <form class="contact-form" method="POST" action="enviar_mensaje.php">
           <div style="font-weight:bold;margin-bottom:10px;text-align:center;">Contáctanos</div>

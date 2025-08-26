@@ -9,11 +9,10 @@ $db = $database->getConnection();
 
 $mensaje = '';
 
-// Procesar acciones
 if (isset($_GET['accion'])) {
     if ($_GET['accion'] == 'eliminar' && isset($_GET['id'])) {
         try {
-            $query = "DELETE FROM usuarios WHERE id = :id AND id != 1"; // No eliminar admin principal
+            $query = "DELETE FROM usuarios WHERE id = :id AND id != 1"; 
             $stmt = $db->prepare($query);
             $stmt->bindParam(':id', $_GET['id']);
             if ($stmt->execute()) {
@@ -25,11 +24,10 @@ if (isset($_GET['accion'])) {
     }
 }
 
-// Procesar formulario de creación/edición
 if ($_POST) {
     try {
         if (isset($_POST['id']) && !empty($_POST['id'])) {
-            // Actualizar usuario
+            
             $query = "UPDATE usuarios SET nombre = :nombre, telefono = :telefono, correo = :correo, 
                       email = :email, usuario = :usuario, privilegio = :privilegio";
             
@@ -47,7 +45,7 @@ if ($_POST) {
             
             $stmt->bindParam(':id', $_POST['id']);
         } else {
-            // Crear nuevo usuario
+            
             $query = "INSERT INTO usuarios (nombre, telefono, correo, email, usuario, contrasena, privilegio) 
                       VALUES (:nombre, :telefono, :correo, :email, :usuario, :contrasena, :privilegio)";
             $stmt = $db->prepare($query);
@@ -71,13 +69,11 @@ if ($_POST) {
     }
 }
 
-// Obtener usuarios
 $query = "SELECT * FROM usuarios ORDER BY fecha_creacion DESC";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener usuario para editar
 $usuario_editar = null;
 if (isset($_GET['editar'])) {
     $query = "SELECT * FROM usuarios WHERE id = :id";

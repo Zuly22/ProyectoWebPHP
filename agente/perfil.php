@@ -2,7 +2,6 @@
 require_once '../config/database.php';
 require_once '../includes/session.php';
 
-// Verificar que el usuario esté logueado y sea agente de ventas
 if (!isset($_SESSION['user_id']) || $_SESSION['privilegio'] !== 'agente_ventas') {
     header("Location: ../login.php");
     exit();
@@ -14,14 +13,12 @@ $db = $database->getConnection();
 $message = '';
 $error = '';
 
-// Obtener datos actuales del usuario
 $query = "SELECT * FROM usuarios WHERE id = :id";
 $stmt = $db->prepare($query);
 $stmt->bindParam(':id', $_SESSION['user_id']);
 $stmt->execute();
 $usuario_actual = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Procesar formulario de actualización
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = $_POST['nombre'] ?? '';
     $telefono = $_POST['telefono'] ?? '';
@@ -32,14 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($nombre) || empty($telefono) || empty($email)) {
         $error = 'Por favor complete todos los campos obligatorios';
     } else {
-        // Verificar si se quiere cambiar la contraseña
         if (!empty($nueva_contrasena)) {
             if ($nueva_contrasena !== $confirmar_contrasena) {
                 $error = 'Las contraseñas no coinciden';
             } elseif (strlen($nueva_contrasena) < 6) {
                 $error = 'La contraseña debe tener al menos 6 caracteres';
             } else {
-                // Actualizar con nueva contraseña
                 $contrasena_hash = password_hash($nueva_contrasena, PASSWORD_DEFAULT);
                 $query = "UPDATE usuarios SET nombre = :nombre, telefono = :telefono, email = :email, contrasena = :contrasena WHERE id = :id";
                 $stmt = $db->prepare($query);
@@ -50,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindParam(':id', $_SESSION['user_id']);
             }
         } else {
-            // Actualizar sin cambiar contraseña
             $query = "UPDATE usuarios SET nombre = :nombre, telefono = :telefono, email = :email WHERE id = :id";
             $stmt = $db->prepare($query);
             $stmt->bindParam(':nombre', $nombre);
@@ -60,10 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if (!$error && $stmt->execute()) {
-            $_SESSION['nombre'] = $nombre; // Actualizar nombre en sesión
+            $_SESSION['nombre'] = $nombre; 
             $message = 'Perfil actualizado exitosamente';
             
-            // Recargar datos actuales
             $stmt_reload = $db->prepare("SELECT * FROM usuarios WHERE id = :id");
             $stmt_reload->bindParam(':id', $_SESSION['user_id']);
             $stmt_reload->execute();
@@ -186,7 +179,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Validar que las contraseñas coincidan
         document.getElementById('confirmar_contrasena').addEventListener('input', function() {
             const nueva = document.getElementById('nueva_contrasena').value;
             const confirmar = this.value;
