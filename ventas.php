@@ -37,31 +37,24 @@ function asset_exists(string $path): bool {
         <i class="fas fa-user"></i>
     </a>
     <header class="header">
-        <div class="header-container">
-            <div class="logo">
-            <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
-                <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
-            <?php else: ?>
-                <div class="logo-icon">
-                    <i class="fas fa-building" style="font-size: 30px;"></i>
-                </div>
-            <?php endif; ?>
-            <div class="logo-text">
-                UTN SOLUTIONS<br>
-                REAL STATE
-            </div>
-            <div class="social-icons">
-                <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-            </div>
+    <div class="header-container">
+
+      <div class="brand-block">
+        <div class="logo">
+          <?php if (!empty($config['logo_principal']) && asset_exists($config['logo_principal'])): ?>
+            <img src="<?php echo htmlspecialchars($config['logo_principal']); ?>" alt="UTN Solutions Logo" class="logo-image">
+          <?php else: ?>
+            <div class="logo-icon"><i class="fas fa-building" style="font-size:30px;"></i></div>
+          <?php endif; ?>
+          <div class="logo-text">UTN SOLUTIONS<br>REAL STATE</div>
         </div>
+
+        <div class="social-icons">
+          <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="<?php echo htmlspecialchars($config['youtube_url'] ?? '#'); ?>" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
+          <a href="<?php echo htmlspecialchars($config['instagram_url'] ?? '#'); ?>" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
 
         <div class="header-right">
              <nav>
