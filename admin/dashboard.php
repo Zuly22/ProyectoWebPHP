@@ -7,7 +7,6 @@ requireAdmin();
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener estadísticas
 $query = "SELECT COUNT(*) as total FROM propiedades";
 $stmt = $db->prepare($query);
 $stmt->execute();

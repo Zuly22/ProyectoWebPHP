@@ -213,24 +213,18 @@ if (isset($_GET['edit'])) {
 </head>
 <body>
 <div class="admin-container">
-    <nav class="admin-nav">
-        <div class="nav-header">
-            <h2>Panel Agente</h2>
-            <p>Bienvenido, <?= htmlspecialchars($_SESSION['nombre']); ?></p>
+    <div class="admin-header">
+        <h1>Gestionar Propiedades</h1>
+        <div class="admin-nav">
+          <a href="dashboard.php" class="active"><i class="fas fa-home"></i> Inicio</a>
+          <a href="propiedades.php"><i class="fas fa-building"></i> Mis Propiedades</a>
+          <a href="perfil.php"><i class="fas fa-user"></i> Mi Perfil</a>
+          <a href="../index.php"><i class="fas fa-globe"></i> Ver Sitio Web</a>
+          <a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         </div>
-        <ul class="nav-menu">
-            <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="propiedades.php" class="active"><i class="fas fa-building"></i> Mis Propiedades</a></li>
-            <li><a href="perfil.php"><i class="fas fa-user"></i> Mi Perfil</a></li>
-            <li><a href="../index.php"><i class="fas fa-globe"></i> Ver Sitio Web</a></li>
-            <li><a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
-        </ul>
-    </nav>
+</div>
 
     <main class="admin-content">
-        <div class="admin-header">
-            <h1>Gestión de Mis Propiedades</h1>
-        </div>
 
         <?php if ($message): ?><div class="alert alert-success"><?= $message; ?></div><?php endif; ?>
         <?php if ($error): ?><div class="alert alert-error"><?= $error; ?></div><?php endif; ?>
@@ -284,11 +278,13 @@ if (isset($_GET['edit'])) {
                     <textarea id="descripcion_larga" name="descripcion_larga" rows="5"><?= $editing_property ? htmlspecialchars($editing_property['descripcion_larga']) : ''; ?></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="mapa">URL del Mapa:</label>
-                    <input type="url" id="mapa" name="mapa"
-                           value="<?= $editing_property ? htmlspecialchars($editing_property['mapa']) : ''; ?>">
-                </div>
+                <div class="form-group" style="grid-column: span 6;">
+                <label for="mapa">Mapa (dirección para Google Maps)</label>
+                <input type="text" id="mapa" name="mapa"
+                       placeholder="Ej: Cañas, Guanacaste, Costa Rica"
+                       value="<?php echo htmlspecialchars($propiedad_editar['mapa'] ?? ''); ?>">
+                <small>En el detalle se mostrará botón "Ver en Google Maps".</small>
+            </div>
 
                 <div class="form-row">
                     <div class="form-group">
@@ -321,71 +317,86 @@ if (isset($_GET['edit'])) {
                 </div>
             </form>
         </div>
-        <div class="table-section">
-            <h2>Mis Propiedades</h2>
-            <div class="table-container">
-                <table class="admin-table">
-                    <thead>
-                    <tr>
-                        <th>Imagen</th>
-                        <th>Título</th>
-                        <th>Tipo</th>
-                        <th>Precio</th>
-                        <th>Ubicación</th>
-                        <th>Destacada</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (empty($propiedades)): ?>
-                        <tr><td colspan="7" style="text-align:center;">No tienes propiedades registradas</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($propiedades as $p): ?>
-                            <tr>
-                                <td>
-                                    <?php if (!empty($p['imagen'])): ?>
-                                        <img src="../<?= htmlspecialchars($p['imagen']); ?>"
-                                             alt="Propiedad" style="width:60px;height:60px;object-fit:cover;border-radius:5px;">
-                                    <?php else: ?>
-                                        <div style="width:60px;height:60px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= htmlspecialchars($p['titulo']); ?></td>
-                                <td>
-                                    <span class="badge <?= ($p['tipo'] === 'venta') ? 'badge-success' : 'badge-info'; ?>">
-                                        <?= ucfirst($p['tipo']); ?>
-                                    </span>
-                                </td>
-                                <td>$<?= number_format((float)$p['precio']); ?></td>
-                                <td><?= htmlspecialchars($p['ubicacion'] ?? ''); ?></td>
-                                <td>
-                                    <?php if (!empty($p['destacada'])): ?>
-                                        <span class="badge badge-warning">Destacada</span>
-                                    <?php else: ?>
-                                        <span class="badge badge-secondary">Normal</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a href="propiedades.php?edit=<?= (int)$p['id']; ?>" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form method="POST" style="display:inline" onsubmit="return confirm('¿Estás seguro de eliminar esta propiedad?')">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="id" value="<?= (int)$p['id']; ?>">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
+        <div class="card">
+  <h2 style="margin-top:0">
+    <i class="fas fa-list"></i> Mis Propiedades
+  </h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Título</th>
+        <th>Tipo</th>
+        <th>Precio</th>
+        <th>Ubicación</th>
+        <th>Destacada</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($propiedades as $p): ?>
+      <tr>
+        <td>
+          <?php
+            // Usa la misma lógica de admin para evitar imágenes rotas
+            $img = $p['imagen'] ?? '';
+            $imgPath = !empty($img) ? '../'.$img : '';
+            if (!empty($imgPath) && file_exists($imgPath)):
+          ?>
+            <img class="img-thumb"
+                 src="<?php echo htmlspecialchars($imgPath); ?>"
+                 alt="<?php echo htmlspecialchars($p['titulo']); ?>">
+          <?php else: ?>
+            <span style="color:#9ca3af">—</span>
+          <?php endif; ?>
+        </td>
+
+        <td><?php echo htmlspecialchars($p['titulo']); ?></td>
+        <td><?php echo htmlspecialchars(ucfirst($p['tipo'])); ?></td>
+
+        <!-- Mismo formato de moneda que admin: colones, 0 decimales, coma y punto -->
+        <td><?php echo '₡' . number_format((float)$p['precio'], 0, ',', '.'); ?></td>
+
+        <td><?php echo htmlspecialchars($p['ubicacion'] ?? ''); ?></td>
+
+        <td><?php echo !empty($p['destacada']) ? 'Sí' : 'No'; ?></td>
+
+        <td>
+          <!-- Editar (mantengo tu ruta de agente) -->
+          <a class="btn warning" href="propiedades.php?edit=<?php echo (int)$p['id']; ?>">
+            <i class="fas fa-edit"></i> Editar
+          </a>
+
+          <!-- Eliminar por POST (mismo diseño que admin con .btn.danger) -->
+          <form method="POST" style="display:inline"
+                onsubmit="return confirm('¿Estás seguro de eliminar esta propiedad?')">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="id" value="<?php echo (int)$p['id']; ?>">
+            <button type="submit" class="btn danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </form>
+
+          <!-- Ver pública -->
+          <a class="btn secondary" target="_blank"
+             href="../propiedad.php?id=<?php echo (int)$p['id']; ?>">
+            <i class="fas fa-external-link-alt"></i> Ver
+          </a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+
+    <?php if (empty($propiedades)): ?>
+      <tr>
+        <td colspan="7" style="color:#6b7280">No tienes propiedades registradas.</td>
+      </tr>
+    <?php endif; ?>
+    </tbody>
+  </table>
+</div>
+
     </main>
 </div>
 </body>

@@ -79,19 +79,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="admin-container">
-        <nav class="admin-nav">
-            <div class="nav-header">
-                <h2>Panel Agente</h2>
-                <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['nombre']); ?></p>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="propiedades.php"><i class="fas fa-building"></i> Mis Propiedades</a></li>
-                <li><a href="perfil.php" class="active"><i class="fas fa-user"></i> Mi Perfil</a></li>
-                <li><a href="../index.php"><i class="fas fa-globe"></i> Ver Sitio Web</a></li>
-                <li><a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
-            </ul>
-        </nav>
+        <div class="admin-header">
+        <h1>Mi Perfil</h1>
+        <div class="admin-nav">
+          <a href="dashboard.php" class="active"><i class="fas fa-home"></i> Inicio</a>
+          <a href="propiedades.php"><i class="fas fa-building"></i> Mis Propiedades</a>
+          <a href="perfil.php"><i class="fas fa-user"></i> Mi Perfil</a>
+          <a href="../index.php"><i class="fas fa-globe"></i> Ver Sitio Web</a>
+          <a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+</div>
 
         <main class="admin-content">
             <div class="admin-header">

@@ -75,9 +75,6 @@ if (isset($_GET['accion']) && $_GET['accion'] === 'eliminar' && isset($_GET['id'
     }
 }
 
-/* -------------------------
-   Cargar para edición
-------------------------- */
 $propiedad_editar = null;
 if (isset($_GET['editar'])) {
     $id = (int)$_GET['editar'];
