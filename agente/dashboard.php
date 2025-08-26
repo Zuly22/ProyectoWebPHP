@@ -11,10 +11,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['privilegio'] !== 'agente_ventas')
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener propiedades del agente
-$query = "SELECT * FROM propiedades WHERE agente_id = :agente_id ORDER BY fecha_creacion DESC";
+// Obtener propiedades del agente (alias imagen_destacada como imagen)
+$query = "SELECT 
+            id, titulo, tipo, precio, destacada,
+            COALESCE(imagen_destacada, '') AS imagen
+          FROM propiedades
+          WHERE agente_id = :agente_id
+          ORDER BY fecha_creacion DESC";
 $stmt = $db->prepare($query);
-$stmt->bindParam(':agente_id', $_SESSION['user_id']);
+$stmt->bindParam(':agente_id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stmt->execute();
 $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -26,7 +31,7 @@ $query_stats = "SELECT
     SUM(CASE WHEN destacada = 1 THEN 1 ELSE 0 END) as destacadas
     FROM propiedades WHERE agente_id = :agente_id";
 $stmt_stats = $db->prepare($query_stats);
-$stmt_stats->bindParam(':agente_id', $_SESSION['user_id']);
+$stmt_stats->bindParam(':agente_id', $_SESSION['user_id'], PDO::PARAM_INT);
 $stmt_stats->execute();
 $stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
 ?>
@@ -126,8 +131,9 @@ $stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
                                 <?php foreach (array_slice($propiedades, 0, 5) as $propiedad): ?>
                                     <tr>
                                         <td>
-                                            <?php if ($propiedad['imagen']): ?>
-                                                <img src="../<?php echo htmlspecialchars($propiedad['imagen']); ?>" 
+                                            <?php $img = $propiedad['imagen'] ?? ''; ?>
+                                            <?php if (!empty($img)): ?>
+                                                <img src="../<?= htmlspecialchars($img); ?>" 
                                                      alt="Propiedad" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
                                             <?php else: ?>
                                                 <div style="width: 50px; height: 50px; background: #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
