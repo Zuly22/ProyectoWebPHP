@@ -4,10 +4,8 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Obtener ID de la propiedad
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Obtener datos de la propiedad
 $query = "SELECT p.*, u.nombre as agente_nombre, u.telefono as agente_telefono, u.correo as agente_correo 
           FROM propiedades p 
           LEFT JOIN usuarios u ON p.agente_id = u.id 
@@ -22,23 +20,21 @@ if (!$propiedad) {
     exit;
 }
 
-// Obtener configuración del sitio
 $query = "SELECT * FROM configuracion_sitio LIMIT 1";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $config = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Imagen destacada (fallback)
 $img = (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada']))
     ? $propiedad['imagen_destacada']
     : '/placeholder.svg?height=400&width=600';
 
-// URL de Google Maps si hay dirección en 'mapa'
 $mapsUrl = '';
 if (!empty($propiedad['mapa'])) {
     $addr = urlencode($propiedad['mapa']);
     $mapsUrl = "https://www.google.com/maps/search/?api=1&query={$addr}";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -49,39 +45,51 @@ if (!empty($propiedad['mapa'])) {
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <!-- Header -->
+<body class="tema-<?php echo htmlspecialchars($config['tema_color']); ?>">
+    <a href="login.php" class="login-icon">
+        <i class="fas fa-user"></i>
+    </a>
     <header class="header">
         <div class="header-container">
             <div class="logo">
+            <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
+                <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
+            <?php else: ?>
                 <div class="logo-icon">
                     <i class="fas fa-building" style="font-size: 30px;"></i>
                 </div>
-                <div class="logo-text">
-                    UTN SOLUTIONS<br>
-                    REAL STATE
-                </div>
+            <?php endif; ?>
+            <div class="logo-text">
+                UTN SOLUTIONS<br>
+                REAL STATE
             </div>
-            
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.php">INICIO</a></li>
-                    <li><a href="index.php#quienes-somos">QUIENES SOMOS</a></li>
-                    <li><a href="alquileres.php">ALQUILERES</a></li>
-                    <li><a href="ventas.php">VENTAS</a></li>
-                    <li><a href="index.php#contacto">CONTACTENOS</a></li>
-                </ul>
-            </nav>
-            
-            <div class="header-right">
-                <a href="login.php" class="login-icon">
-                    <i class="fas fa-user"></i>
+            <div class="social-icons">
+                <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
+                    <i class="fab fa-instagram"></i>
                 </a>
             </div>
         </div>
-    </header>
 
-    <!-- Detalle de Propiedad -->
+        <div class="header-right">
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.php">INICIO</a></li>
+                    <li><a href="#quienes-somos">QUIENES SOMOS</a></li>
+                    <li><a href="alquileres.php">ALQUILERES</a></li>
+                    <li><a href="ventas.php">VENTAS</a></li>
+                    <li><a href="#contacto">CONTACTENOS</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
     <section class="properties">
         <div class="properties-container">
             <div class="property-detail">
@@ -139,7 +147,6 @@ if (!empty($propiedad['mapa'])) {
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-section">
@@ -147,7 +154,7 @@ if (!empty($propiedad['mapa'])) {
                     <div class="logo-icon">
                         <i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i>
                     </div>
-                    <div class="logo-text" style="color: #1a1a2e;">
+                    <div class="logo-text" style="color: #ffffffff;">
                         UTN SOLUTIONS<br>
                         REAL STATE
                     </div>
@@ -167,17 +174,55 @@ if (!empty($propiedad['mapa'])) {
     </footer>
 
     <style>
-    .property-detail { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-    .property-detail h1 { text-align: center; margin-bottom: 30px; color: #1a1a2e; }
-    .property-detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 40px; }
-    .property-detail-image img { width: 100%; height: 400px; object-fit: cover; border-radius: 10px; }
-    .property-detail-info { background: #f8f9fa; padding: 30px; border-radius: 10px; }
-    .property-detail-info > div { margin-bottom: 20px; }
-    .property-agent { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
-    .property-description { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 30px; }
-    .property-actions { text-align: center; }
+    .property-detail { 
+        max-width: 1000px; 
+        margin: 0 auto; 
+        padding: 40px 20px; 
+    }
+    .property-detail h1 { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        color: #1a1a2e; 
+    }
+    .property-detail-grid { 
+        display: grid; 
+        grid-template-columns: 2fr 1fr; 
+        gap: 40px; 
+        margin-bottom: 40px; 
+    }
+    .property-detail-image img { 
+        width: 100%; 
+        height: 400px; 
+        object-fit: cover; 
+        border-radius: 10px; 
+    }
+    .property-detail-info { 
+        background: #f8f9fa; 
+        padding: 30px; 
+        border-radius: 10px; 
+    }
+    .property-detail-info > div { 
+        margin-bottom: 20px; 
+    }
+    .property-agent { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 10px; 
+        margin-top: 20px; 
+    }
+    .property-description { 
+        background: #f8f9fa; 
+        padding: 30px; 
+        border-radius: 10px; 
+        margin-bottom: 30px; 
+    }
+    .property-actions { 
+        text-align: center; 
+    }
     @media (max-width: 768px) {
-        .property-detail-grid { grid-template-columns: 1fr; }
+        .property-detail-grid {
+            grid-template-columns: 1fr; 
+        }
     }
     </style>
 </body>
