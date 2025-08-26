@@ -52,7 +52,7 @@ if ($busqueda !== '') {
 $hero_style = '';
 if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) {
     $url = htmlspecialchars($config['imagen_banner']);
-    $hero_style = "style=\"background-image: linear-gradient(rgba(9,19,55,.85), rgba(9,19,55,.85)), url('{$url}'); background-size: cover; background-position: center;\"";
+    $hero_style = "style=\"background-image:url('{$url}');\"";
 }
 ?>
 <!DOCTYPE html>
@@ -63,6 +63,8 @@ if (!empty($config['imagen_banner']) && asset_exists($config['imagen_banner'])) 
   <title>UTN Solutions Real State</title>
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+
 </head>
 <body class="tema-<?php echo htmlspecialchars($config['tema_color'] ?? 'azul'); ?>">
   <a href="login.php" class="login-icon"><i class="fas fa-user"></i></a>

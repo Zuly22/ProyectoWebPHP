@@ -9,31 +9,31 @@
   --color-bg-form: #f8f9fa;
 }
 
-/* Tema azul: fondo oscuro, texto claro */
 body.tema-azul {
   --color-primary: #1a1a2e;
   --color-secondary: #16213e;
   --color-accent: #ffd700;
   --color-text: #333;
+  --color-text-secondary: #333;
   --color-light: #f8f9fa;
   --color-success: #4caf50;
   --color-warning: #ff9800;
   --color-danger: #e53935;
   --color-info: #2196f3;
-  --color-bg-footer: #ffd700;         /* Fondo amarillo */
-  --color-footer-text: #1a1a2e;       /* Texto oscuro en el footer */
-  --color-footer-link: #1a1a2e;       /* Enlaces oscuros en el footer */
-  --color-footer-icon: #1a1a2e;       /* Iconos oscuros en el footer */
+  --color-bg-footer: #ffd700;
+  --color-footer-text: #1a1a2e;
+  --color-footer-link: #1a1a2e;
+  --color-footer-icon: #1a1a2e;
   --color-bg-card: #fff;
   --color-bg-form: #f8f9fa;
 }
-/* Tema amarillo/gris: fondo claro, texto oscuro */
+
 body.tema-amarillo_gris {
   --color-primary: #ffc107;
   --color-secondary: #6c757d;
   --color-accent: #212529;
-  --color-text: #212529;  
-  --color-text-secondary: #ffffff;
+  --color-text: #212529;
+  --color-text-secondary: #212529;
   --color-light: #fffbea;
   --color-success: #43a047;
   --color-warning: #ffb300;
@@ -49,7 +49,8 @@ body.tema-blanco_gris {
   --color-primary: #ffffff;
   --color-secondary: #dee2e6;
   --color-accent: #000000;
-  --color-text: #212529;      /* Texto oscuro */
+  --color-text: #212529;
+  --color-text-secondary: #212529;
   --color-light: #f8f9fa;
   --color-success: #388e3c;
   --color-warning: #fbc02d;
@@ -60,7 +61,6 @@ body.tema-blanco_gris {
   --color-bg-form: #f8f9fa;
 }
 
-/* Reset y base */
 * {
   margin: 0;
   padding: 0;
@@ -68,10 +68,64 @@ body.tema-blanco_gris {
 }
 
 body {
-  font-family: "Arial", sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
   line-height: 1.6;
   color: var(--color-text);
   background: var(--color-light);
+}
+
+body.tema-blanco_gris .property-card,
+body.tema-blanco_gris .property-title,
+body.tema-blanco_gris .property-description,
+body.tema-blanco_gris .property-price {
+  color: var(--color-text) !important;
+  
+}
+body.tema-blanco_gris .about h2,
+body.tema-blanco_gris .about p {
+  color: var(--color-text) !important;
+}
+
+body.tema-blanco_gris .properties h2 {
+  color: var(--color-text) !important;
+}
+
+body.tema-blanco_gris .login-icon{
+  background:#000 !important;   /* negro */
+  color:#fff !important;        /* ícono blanco */
+  border:2px solid #000 !important;
+  transition:background .2s,color .2s,border-color .2s;
+}
+body.tema-blanco_gris .login-icon:hover{
+  background:#fff !important;   /* blanco */
+  color:#000 !important;        /* ícono negro */
+  border-color:#000 !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, a, b, strong, label,
+.property-title,
+.property-description,
+.property-price,
+.footer-section,
+.footer-section .logo-text,
+.footer-section p,
+.footer-section a,
+.footer-section b,
+.contact-form label,
+.contact-form input,
+.contact-form textarea,
+.login-form,
+.login-form h2 {
+  color: var(--color-text);
+}
+
+/* Footer textos secundarios */
+.footer,
+.footer-section p,
+.footer-section a,
+.footer-section b {
+  color: var(--color-text-secondary);
 }
 
 /* Header */
@@ -115,30 +169,27 @@ body {
 }
 
 /* Navegación */
-/* ===== NAV (menú superior) ===== */
 .nav-menu{
   display:flex;
   list-style:none;
-  gap:0; /* usamos separadores, no gaps */
+  gap:0;
   margin:0;
   padding:0;
 }
 
-/* separadores tipo “|” entre ítems */
 .nav-with-pipes li{
   padding:0 10px;
   position:relative;
 }
 .nav-with-pipes li + li::before{
   content:"|";
-  color:var(--color-accent); /* dorado */
+  color:var(--color-accent);
   opacity:.95;
   margin-right:10px;
 }
 
-/* links del nav */
 .nav-menu a{
-  color:var(--color-accent);            /* dorado */
+  color:var(--color-accent);
   text-decoration:none;
   font-weight:700;
   letter-spacing:.06em;
@@ -147,22 +198,19 @@ body {
   transition:color .2s ease;
 }
 .nav-menu a:hover{
-  color:#ffffff;                        /* blanco al pasar el mouse */
+  color:#ffffff;
 }
 
-/* estado activo (opcional) */
 .nav-menu a.active{
   color:#ffffff;
   text-decoration:underline;
   text-underline-offset:4px;
 }
 
-/* responsive mínimo */
 @media (max-width: 992px){
   .nav-menu{ flex-wrap:wrap; row-gap:8px; }
   .nav-with-pipes li{ padding:4px 10px; }
 }
-
 
 /* Header derecho */
 .header-right {
@@ -200,12 +248,10 @@ body {
 }
 
 /* Buscador */
-/* Barra principal de navegación */
-/* Barra principal de navegación */
 .main-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Menú a la izq, buscador a la der */
+  justify-content: space-between;
   background: var(--color-secondary, #101a2b);
   padding: 0 40px;
   min-height: 56px;
@@ -214,16 +260,6 @@ body {
   gap: 20px;
 }
 
-/* Menú de navegación */
-.nav-menu {
-  display: flex;
-  list-style: none;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-}
-
-/* Buscador moderno alineado a la derecha */
 .nav-search {
   display: flex;
   align-items: center;
@@ -264,6 +300,7 @@ body {
   background: #ffb400;
   color: #222;
 }
+
 /* Login */
 .login-icon {
   background: var(--color-primary);
@@ -287,42 +324,56 @@ body {
 }
 
 /* Hero */
-.hero {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  padding: 80px 0;
+/* HERO con imagen de fondo y banda oscura horizontal */
+.hero{
+  position: relative;
+  min-height: 420px;                 /* ajusta a tu gusto */
+  background-color: #0b1230;         /* fallback si no hay imagen */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 0;                        /* la banda se encarga del contraste */
+  display: flex;
+  align-items: center;               /* centra vertical */
+  justify-content: center;           /* centra horizontal */
+}
+
+/* Banda oscura delgada atravesando el hero */
+.hero::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100px;                     /* alto de la banda */
+  background: rgba(0,0,0,.42);       /* opacidad de la banda */
+  pointer-events: none;
+}
+
+/* Contenido por encima de la banda */
+.hero-container{ position: relative; z-index: 2; }
+.hero-content{ background: none !important; padding: 0 !important; }
+
+/* Texto del hero como en la maqueta */
+.hero h1{
+  color: #fff !important;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+   font-weight: 300 !important;  /* más delgado (prueba 200 si tu fuente lo soporta) */
+  font-style: italic !important; /* cursiva */
+  letter-spacing: .08em;   
+  font-size: clamp(22px, 3vw, 36px);
   text-align: center;
-  position: relative;
-  overflow: hidden;
+  margin: 0 16px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.5);
 }
 
-.hero-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  position: relative;
-  z-index: 2;
+/* Opcional: un poco de espacio arriba/abajo en pantallas pequeñas */
+@media (max-width: 640px){
+  .hero{ min-height: 340px; }
+  .hero::after{ height: 96px; }
 }
 
-.hero-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.hero h1 {
-  color: var(--color-light);
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.hero-image {
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  margin: 30px auto;
-  display: block;
-}
 
 /* About */
 .about {
@@ -363,7 +414,7 @@ body {
 .about-image img {
   width: 260px;
   height: 200px;
-  border-radius: 0;      /* Quita el círculo, ahora es cuadrada */
+  border-radius: 0;
   object-fit: cover;
 }
 
@@ -567,19 +618,20 @@ body {
   background: var(--color-primary);
   color: var(--color-light);
   text-align: center;
-  padding: 26px 0;         /* Más alto */
+  padding: 26px 0;
   margin-top: 10px;
   font-weight: bold;
-  font-size: 1.3rem;       /* Más grande */
-  letter-spacing: 1px;     /* Más separación entre letras */
+  font-size: 1.3rem;
+  letter-spacing: 1px;
   width: 100%;
   box-sizing: border-box;
 }
+
 .contact-form {
   background: #e9ded6;
   padding: 18px 20px;
   border-radius: 12px;
-  color: #1a1a2e;
+  color: var(--color-text);
   border: none;
   width: 100%;
   max-width: 350px;
@@ -594,9 +646,9 @@ body {
 .contact-form label {
   font-weight: bold;
   font-size: 15px;
-  color: #1a1a2e;
+  color: var(--color-text);
   margin-bottom: 0;
-  width: 90px; /* ancho fijo para alinear */
+  width: 90px;
   flex-shrink: 0;
   text-align: right;
   margin-right: 10px;
@@ -608,7 +660,7 @@ body {
   padding: 7px;
   border-radius: 3px;
   border: none;
-  color: #1a1a2e;
+  color: var(--color-text);
   background: #fff;
   font-size: 15px;
 }
@@ -621,8 +673,8 @@ body {
   width: 60%;
   margin: 12px auto 0 auto;
   display: block;
-  background: #1a1a2e;
-  color: #ffd700;
+  background: var(--color-primary);
+  color: var(--color-accent);
   border: none;
   padding: 7px 0;
   border-radius: 5px;
@@ -916,4 +968,3 @@ body {
   margin-bottom: 30px;
   color: var(--color-primary);
 }
-
