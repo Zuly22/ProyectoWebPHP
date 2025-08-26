@@ -44,7 +44,6 @@ body.tema-amarillo_gris {
   --color-bg-form: #f8f9fa;
 }
 
-/* Tema blanco/gris: fondo muy claro, texto oscuro */
 body.tema-blanco_gris {
   --color-primary: #ffffff;
   --color-secondary: #dee2e6;
@@ -108,14 +107,14 @@ body.tema-blanco_gris .properties h2 {
 }
 
 body.tema-blanco_gris .login-icon{
-  background:#000 !important;   /* negro */
-  color:#fff !important;        /* ícono blanco */
+  background:#000 !important;   
+  color:#fff !important;        
   border:2px solid #000 !important;
   transition:background .2s,color .2s,border-color .2s;
 }
 body.tema-blanco_gris .login-icon:hover{
-  background:#fff !important;   /* blanco */
-  color:#000 !important;        /* ícono negro */
+  background:#fff !important;   
+  color:#000 !important;    
   border-color:#000 !important;
 }
 
@@ -137,7 +136,6 @@ p, a, b, strong, label,
   color: var(--color-text);
 }
 
-/* Footer textos secundarios */
 .footer,
 .footer-section p,
 .footer-section a,
@@ -145,7 +143,6 @@ p, a, b, strong, label,
   color: var(--color-text-secondary);
 }
 
-/* Header */
 .header {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   padding: 15px 0;
@@ -185,7 +182,6 @@ p, a, b, strong, label,
   color: var(--color-accent);
 }
 
-/* Navegación */
 .nav-menu{
   display:flex;
   list-style:none;
@@ -229,14 +225,12 @@ p, a, b, strong, label,
   .nav-with-pipes li{ padding:4px 10px; }
 }
 
-/* Header derecho */
 .header-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-/* Redes sociales */
 .social-icons {
   display: flex;
   gap: 10px;
@@ -264,7 +258,6 @@ p, a, b, strong, label,
   background: #e4405f;
 }
 
-/* Buscador */
 .main-bar {
   display: flex;
   align-items: center;
@@ -318,7 +311,6 @@ p, a, b, strong, label,
   color: #222;
 }
 
-/* Login */
 .login-icon {
   background: var(--color-primary);
   color: var(--color-light);
@@ -340,44 +332,46 @@ p, a, b, strong, label,
   color: var(--color-primary);
 }
 
-/* Hero */
-/* HERO con imagen de fondo y banda oscura horizontal */
 .hero{
   position: relative;
-  min-height: 420px;                 /* ajusta a tu gusto */
-  background-color: #0b1230;         /* fallback si no hay imagen */
+  min-height: 420px;              
+  background-color: #0b1230;  
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 0;                        /* la banda se encarga del contraste */
+  padding: 0;                      
   display: flex;
-  align-items: center;               /* centra vertical */
-  justify-content: center;           /* centra horizontal */
+  align-items: center;        
+  justify-content: center;     
 }
 
-/* Banda oscura delgada atravesando el hero */
 .hero::after{
   content: "";
   position: absolute;
   left: 0; right: 0;
   top: 50%;
   transform: translateY(-50%);
-  height: 100px;                     /* alto de la banda */
-  background: rgba(0,0,0,.42);       /* opacidad de la banda */
+  height: 100px;                   
+  background: rgba(0,0,0,.42);    
   pointer-events: none;
 }
 
-/* Contenido por encima de la banda */
-.hero-container{ position: relative; z-index: 2; }
-.hero-content{ background: none !important; padding: 0 !important; }
+.hero-container{ 
+  position: relative; 
+  z-index: 2; 
+}
 
-/* Texto del hero como en la maqueta */
+.hero-content{ 
+  background: none !important; 
+  padding: 0 !important; 
+}
+
 .hero h1{
   color: #fff !important;
   text-transform: uppercase;
   letter-spacing: .14em;
-   font-weight: 300 !important;  /* más delgado (prueba 200 si tu fuente lo soporta) */
-  font-style: italic !important; /* cursiva */
+   font-weight: 300 !important;  
+  font-style: italic !important; 
   letter-spacing: .08em;   
   font-size: clamp(22px, 3vw, 36px);
   text-align: center;
@@ -385,14 +379,13 @@ p, a, b, strong, label,
   text-shadow: 2px 2px 4px rgba(0,0,0,.5);
 }
 
-/* Opcional: un poco de espacio arriba/abajo en pantallas pequeñas */
+
 @media (max-width: 640px){
   .hero{ min-height: 340px; }
   .hero::after{ height: 96px; }
 }
 
 
-/* About */
 .about {
   background: var(--color-light);
   padding: 80px 0;
@@ -435,7 +428,6 @@ p, a, b, strong, label,
   object-fit: cover;
 }
 
-/* Propiedades */
 .properties {
   padding: 80px 0;
   background: var(--color-light);
@@ -541,7 +533,6 @@ p, a, b, strong, label,
   color: var(--color-primary);
 }
 
-/* Footer */
 .footer {
   background: var(--color-bg-footer);
   padding: 40px 0 0px;
@@ -709,7 +700,6 @@ p, a, b, strong, label,
   font-weight: bold;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;
@@ -740,7 +730,6 @@ p, a, b, strong, label,
   }
 }
 
-/* Admin panel y formularios */
 .admin-panel {
   background: var(--color-light);
   min-height: 100vh;
@@ -917,7 +906,6 @@ p, a, b, strong, label,
   border: 1px solid var(--color-info);
 }
 
-/* Galería */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -961,7 +949,6 @@ p, a, b, strong, label,
   color: var(--color-text);
 }
 
-/* Login */
 .login-container {
   min-height: 100vh;
   display: flex;

@@ -1,4 +1,9 @@
 <?php
+
+//para enviar email 
+//instalar composer
+//en la ubicación del proyecto en cmd correr el comando: composer require phpmailer/phpmailer
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -32,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $mail->setFrom('inmobiliariopro02@gmail.com', 'Inmobiliaria S.A.');
         
-        $mail->addAddress("info@utninmobiliaria.com", "Admin UTN Inmobiliaria"); // correo oficial
+        $mail->addAddress("info@utninmobiliaria.com", "Admin UTN Inmobiliaria");
         $mail->addReplyTo($email, $nombre); 
         $mail->addBCC($email, $nombre); 
 

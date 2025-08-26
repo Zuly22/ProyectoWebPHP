@@ -180,7 +180,7 @@ if (isset($_GET['editar'])) {
                                 <a href="usuarios.php?editar=<?php echo $usuario['id']; ?>" class="btn">Editar</a>
                                 <?php if ($usuario['id'] != 1): ?>
                                     <a href="usuarios.php?accion=eliminar&id=<?php echo $usuario['id']; ?>" 
-                                       class="btn btn-danger" 
+                                       class="btn" 
                                        onclick="return confirm('¿Está seguro de eliminar este usuario?')">Eliminar</a>
                                 <?php endif; ?>
                             </td>
