@@ -52,25 +52,37 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="tema-<?php echo htmlspecialchars($config['tema_color']); ?>">
-
-    <!-- Header -->
+    <a href="login.php" class="login-icon">
+        <i class="fas fa-user"></i>
+    </a>
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <!-- Using dynamic logo from database configuration -->
-                <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
-                    <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
-                <?php else: ?>
-                    <div class="logo-icon">
-                        <i class="fas fa-building" style="font-size: 30px;"></i>
-                    </div>
-                <?php endif; ?>
-                <div class="logo-text">
-                    UTN SOLUTIONS<br>
-                    REAL STATE
+            <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
+                <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
+            <?php else: ?>
+                <div class="logo-icon">
+                    <i class="fas fa-building" style="font-size: 30px;"></i>
                 </div>
+            <?php endif; ?>
+            <div class="logo-text">
+                UTN SOLUTIONS<br>
+                REAL STATE
             </div>
-            
+            <div class="social-icons">
+                <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="header-right">
             <nav>
                 <ul class="nav-menu">
                     <li><a href="index.php">INICIO</a></li>
@@ -80,43 +92,23 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
                     <li><a href="#contacto">CONTACTENOS</a></li>
                 </ul>
             </nav>
-            
-            <div class="header-right">
-                <div class="social-icons">
-                    <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
-                
-                <form class="search-container" method="GET">
-                    <input type="text" name="buscar" class="search-input" placeholder="Buscar propiedades..." value="<?php echo htmlspecialchars($busqueda); ?>">
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-                
-                <a href="login.php" class="login-icon">
-                    <i class="fas fa-user"></i>
-                </a>
-            </div>
         </div>
-    </header>
+    </div>
+</header>
+    <form class="search-container" method="GET">
+        <input type="text" name="buscar" class="search-input" placeholder="Buscar propiedades..." value="<?php echo htmlspecialchars($busqueda); ?>">
+        <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
 
     <?php if (!empty($resultados_busqueda)): ?>
-    <!-- Resultados de búsqueda -->
     <section class="properties">
         <div class="properties-container">
             <h2>Resultados de búsqueda para: "<?php echo htmlspecialchars($busqueda); ?>"</h2>
             <div class="properties-grid">
                 <?php foreach ($resultados_busqueda as $propiedad): ?>
                 <div class="property-card">
-                    <!-- Using dynamic property images with fallback -->
                     <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
                         <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
                     <?php else: ?>
@@ -135,12 +127,10 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
     </section>
     <?php else: ?>
     
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-container">
             <div class="hero-content">
                 <h1><?php echo $config['mensaje_banner'] ?? 'PERMITENOS SAYUDARTE A CUMPLIR TUS SUEÑOS'; ?></h1>
-                <!-- Using dynamic banner image from database -->
                 <?php if (!empty($config['imagen_banner']) && file_exists($config['imagen_banner'])): ?>
                     <img src="<?php echo $config['imagen_banner']; ?>" alt="Banner Principal" class="hero-image">
                 <?php else: ?>
@@ -150,7 +140,6 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- About Section -->
     <section class="about" id="quienes-somos">
         <div class="about-container">
             <div class="about-content">
@@ -158,7 +147,6 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
                 <p><?php echo $config['quienes_somos_texto'] ?? 'Información sobre la empresa...'; ?></p>
             </div>
             <div class="about-image">
-                <!-- Using dynamic about section image -->
                 <?php if (!empty($config['imagen_quienes_somos']) && file_exists($config['imagen_quienes_somos'])): ?>
                     <img src="<?php echo $config['imagen_quienes_somos']; ?>" alt="Quienes Somos">
                 <?php else: ?>
@@ -168,14 +156,12 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- Propiedades Destacadas -->
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES DESTACADAS</h2>
             <div class="properties-grid">
                 <?php foreach ($destacadas as $propiedad): ?>
                 <div class="property-card">
-                    <!-- Using dynamic property images with fallback -->
                     <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
                         <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
                     <?php else: ?>
@@ -195,7 +181,6 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- Propiedades en Venta -->
     <section class="properties">
         <div class="properties-container">
             <h2>PROPIEDADES EN VENTA</h2>
@@ -221,7 +206,6 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
         </div>
     </section>
 
-    <!-- Propiedades en Alquiler -->
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES EN ALQUILER</h2>
@@ -249,12 +233,10 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
 
     <?php endif; ?>
 
-    <!-- Footer -->
     <footer class="footer" id="contacto">
         <div class="footer-container">
             <div class="footer-section">
                 <div class="logo">
-                    <!-- Using dynamic white logo in footer -->
                     <?php if (!empty($config['logo_blanco']) && file_exists($config['logo_blanco'])): ?>
                         <img src="<?php echo $config['logo_blanco']; ?>" alt="UTN Solutions Logo" class="logo-image" style="filter: brightness(0);">
                     <?php else: ?>
@@ -262,7 +244,7 @@ if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
                             <i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i>
                         </div>
                     <?php endif; ?>
-                    <div class="logo-text" style="color: #1a1a2e;">
+                    <div class="logo-text" style="color: #ffffffff;">
                         UTN SOLUTIONS<br>
                         REAL STATE
                     </div>
