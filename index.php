@@ -68,7 +68,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
     <header class="header">
         <div class="header-container">
             <div class="logo">
-<<<<<<< HEAD
                 <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
                     <img src="<?php echo htmlspecialchars($config['logo_principal']); ?>" alt="UTN Solutions Logo" class="logo-image">
                 <?php else: ?>
@@ -76,67 +75,42 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
                 <?php endif; ?>
                 <div class="logo-text">
                     UTN SOLUTIONS<br>REAL STATE
-=======
-            <?php if (!empty($config['logo_principal']) && file_exists($config['logo_principal'])): ?>
-                <img src="<?php echo $config['logo_principal']; ?>" alt="UTN Solutions Logo" class="logo-image">
-            <?php else: ?>
-                <div class="logo-icon">
-                    <i class="fas fa-building" style="font-size: 30px;"></i>
->>>>>>> origin/dev
                 </div>
-            <?php endif; ?>
-            <div class="logo-text">
-                UTN SOLUTIONS<br>
-                REAL STATE
+                <div class="social-icons">
+                    <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
             </div>
-<<<<<<< HEAD
-
-=======
-            <div class="social-icons">
-                <a href="<?php echo $config['facebook_url'] ?? '#'; ?>" class="social-icon facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="<?php echo $config['youtube_url'] ?? '#'; ?>" class="social-icon youtube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="<?php echo $config['instagram_url'] ?? '#'; ?>" class="social-icon instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="header-right">
->>>>>>> origin/dev
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.php">INICIO</a></li>
-                    <li><a href="#quienes-somos">QUIENES SOMOS</a></li>
-                    <li><a href="alquileres.php">ALQUILERES</a></li>
-                    <li><a href="ventas.php">VENTAS</a></li>
-                    <li><a href="#contacto">CONTACTENOS</a></li>
-                </ul>
-            </nav>
-<<<<<<< HEAD
-
             <div class="header-right">
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="index.php">INICIO</a></li>
+                        <li><a href="#quienes-somos">QUIENES SOMOS</a></li>
+                        <li><a href="alquileres.php">ALQUILERES</a></li>
+                        <li><a href="ventas.php">VENTAS</a></li>
+                        <li><a href="#contacto">CONTACTENOS</a></li>
+                    </ul>
+                </nav>
                 <div class="social-icons">
                     <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="<?php echo htmlspecialchars($config['youtube_url'] ?? '#'); ?>" class="social-icon youtube"><i class="fab fa-youtube"></i></a>
                     <a href="<?php echo htmlspecialchars($config['instagram_url'] ?? '#'); ?>" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
                 </div>
-
                 <form class="search-container" method="GET">
                     <input type="text" name="buscar" class="search-input" placeholder="Buscar propiedades..." value="<?php echo htmlspecialchars($busqueda); ?>">
                     <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                 </form>
-
                 <a href="login.php" class="login-icon"><i class="fas fa-user"></i></a>
             </div>
-=======
->>>>>>> origin/dev
         </div>
-    </div>
-</header>
+    </header>
     <form class="search-container" method="GET">
         <input type="text" name="buscar" class="search-input" placeholder="Buscar propiedades..." value="<?php echo htmlspecialchars($busqueda); ?>">
         <button type="submit" class="search-btn">
@@ -149,7 +123,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         <div class="properties-container">
             <h2>Resultados de búsqueda para: "<?php echo htmlspecialchars($busqueda); ?>"</h2>
             <div class="properties-grid">
-<<<<<<< HEAD
                 <?php foreach ($resultados_busqueda as $p): ?>
                     <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
                         <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
@@ -160,41 +133,16 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
                             <span class="ver-mas-btn">Ver Detalles</span>
                         </div>
                     </a>
-=======
-                <?php foreach ($resultados_busqueda as $propiedad): ?>
-                <div class="property-card">
-                    <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
-                        <img src="<?php echo $propiedad['imagen_destacada']; ?>" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php else: ?>
-                        <img src="/placeholder.svg?height=200&width=350" alt="<?php echo $propiedad['titulo']; ?>" class="property-image">
-                    <?php endif; ?>
-                    <div class="property-info">
-                        <h3 class="property-title"><?php echo $propiedad['titulo']; ?></h3>
-                        <p class="property-description"><?php echo $propiedad['descripcion_breve']; ?></p>
-                        <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
-                        <a href="propiedad.php?id=<?php echo $propiedad['id']; ?>" class="ver-mas-btn">Ver Detalles</a>
-                    </div>
-                </div>
->>>>>>> origin/dev
                 <?php endforeach; ?>
             </div>
         </div>
     </section>
-
     <?php else: ?>
-<<<<<<< HEAD
     <!-- Hero -->
     <section class="hero">
         <div class="hero-container">
             <div class="hero-content">
                 <h1><?php echo htmlspecialchars($config['mensaje_banner'] ?? 'PERMÍTENOS AYUDARTE A CUMPLIR TUS SUEÑOS'); ?></h1>
-=======
-    
-    <section class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <h1><?php echo $config['mensaje_banner'] ?? 'PERMITENOS SAYUDARTE A CUMPLIR TUS SUEÑOS'; ?></h1>
->>>>>>> origin/dev
                 <?php if (!empty($config['imagen_banner']) && file_exists($config['imagen_banner'])): ?>
                     <img src="<?php echo htmlspecialchars($config['imagen_banner']); ?>" alt="Banner Principal" class="hero-image">
                 <?php else: ?>
@@ -204,10 +152,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         </div>
     </section>
 
-<<<<<<< HEAD
-    <!-- About -->
-=======
->>>>>>> origin/dev
     <section class="about" id="quienes-somos">
         <div class="about-container">
             <div class="about-content">
@@ -224,26 +168,10 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         </div>
     </section>
 
-<<<<<<< HEAD
-    <!-- Destacadas -->
-=======
->>>>>>> origin/dev
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES DESTACADAS</h2>
             <div class="properties-grid">
-<<<<<<< HEAD
-                <?php foreach ($destacadas as $p): ?>
-                    <a class="property-card" href="propiedad.php?id=<?php echo (int)$p['id']; ?>">
-                        <img src="<?php echo img_prop_or_placeholder($p); ?>" alt="<?php echo htmlspecialchars($p['titulo']); ?>" class="property-image">
-                        <div class="property-info">
-                            <h3 class="property-title"><?php echo htmlspecialchars($p['titulo']); ?></h3>
-                            <p class="property-description"><?php echo htmlspecialchars($p['descripcion_breve']); ?></p>
-                            <div class="property-price">₡<?php echo number_format((float)$p['precio'], 0, ',', '.'); ?></div>
-                            <span class="ver-mas-btn">Ver Detalles</span>
-                        </div>
-                    </a>
-=======
                 <?php foreach ($destacadas as $propiedad): ?>
                 <div class="property-card">
                     <?php if (!empty($propiedad['imagen_destacada']) && file_exists($propiedad['imagen_destacada'])): ?>
@@ -257,7 +185,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
                         <div class="property-price">Precio: $<?php echo number_format($propiedad['precio']); ?></div>
                     </div>
                 </div>
->>>>>>> origin/dev
                 <?php endforeach; ?>
             </div>
             <div class="ver-mas-container">
@@ -266,10 +193,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         </div>
     </section>
 
-<<<<<<< HEAD
-    <!-- Ventas -->
-=======
->>>>>>> origin/dev
     <section class="properties">
         <div class="properties-container">
             <h2>PROPIEDADES EN VENTA</h2>
@@ -292,10 +215,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
         </div>
     </section>
 
-<<<<<<< HEAD
-    <!-- Alquileres -->
-=======
->>>>>>> origin/dev
     <section class="properties dark">
         <div class="properties-container">
             <h2>PROPIEDADES EN ALQUILER</h2>
@@ -322,15 +241,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
     <footer class="footer" id="contacto">
         <div class="footer-container">
             <div class="footer-section">
-<<<<<<< HEAD
-                <?php if (!empty($config['logo_blanco']) && file_exists($config['logo_blanco'])): ?>
-                    <img src="<?php echo htmlspecialchars($config['logo_blanco']); ?>" alt="UTN Solutions Logo" class="logo-image" style="filter: brightness(0);">
-                <?php else: ?>
-                    <div class="logo-icon"><i class="fas fa-building" style="font-size: 30px; color: #1a1a2e;"></i></div>
-                <?php endif; ?>
-                <div class="logo-text" style="color: #1a1a2e;">
-                    UTN SOLUTIONS<br>REAL STATE
-=======
                 <div class="logo">
                     <?php if (!empty($config['logo_blanco']) && file_exists($config['logo_blanco'])): ?>
                         <img src="<?php echo $config['logo_blanco']; ?>" alt="UTN Solutions Logo" class="logo-image" style="filter: brightness(0);">
@@ -343,7 +253,6 @@ function img_prop_or_placeholder(array $p, int $h = 200, int $w = 350): string {
                         UTN SOLUTIONS<br>
                         REAL STATE
                     </div>
->>>>>>> origin/dev
                 </div>
                 <div class="social-icons" style="margin-top: 20px;">
                     <a href="<?php echo htmlspecialchars($config['facebook_url'] ?? '#'); ?>" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
